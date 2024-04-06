@@ -1,88 +1,93 @@
-from django.shortcuts import redirect, render
-from django.contrib.auth.models import User
+from django.shortcuts import render,redirect
+# from .models import destination_preview
+# from .models import detailed_desc
+# from .models import pessanger_detail
+# from .models import Cards
+# from .models import Transactions
+# from .models import NetBanking
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
-
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.contrib.auth.models import User, auth
+from django.contrib.auth.decorators import *
+from django.utils.dateparse import parse_date
+from django.views.decorators.cache import cache_control
+from django.core.mail import send_mail
+from django import forms
+from django.forms.formsets import formset_factory
+from django.shortcuts import render
+from django.template import Library
+from datetime import datetime
 
 
 
 
 # Create your views here.
-def Home(request):
-    return render(request, "home.html")
+def base(request):
+    return render(request, "base.html")
+
+def index(request):
+    return render(request, "index.html")
+
+def destination_details(request):
+    return render(request, "destination_details.html")
+
+def destination(request):
+    return render(request, "destination.html")
 
 
-
-
-
-def Signup(request):
-    if request.method == "POST":
+def register(request):
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
         username = request.POST['username']
         email = request.POST['email']
-        password = request.POST['password']
-        confirm_password = request.POST['confirm_password']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
 
-        # Check if the username is empty
-        if not username:
-            messages.error(request, "Username cannot be empty")
-            return redirect("signup")
-        
+        if password1 == password2:
+            if User.objects.filter(username=username).exists():
+                messages.info(request, 'Username Taken')
+                return redirect('register')
+            elif User.objects.filter(email=email).exists():
+                messages.info(request, 'Email already Taken')
+                return redirect('register')
+            else:
+                user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name,
+                                                first_name=first_name)
+                user.save()
+                print('User Created')
+                return redirect('login')
+        else:
+            messages.info(request, 'Password does not match ')
+            return redirect('register')
 
-        if not email:
-            messages.error(request, "Email cannot be empty")
-            return redirect("signup")
+    else:
+        return render(request, 'register.html')
 
-        # Check if passwords match
-        if password != confirm_password:
-            messages.error(request, "Passwords dose not match")
-            return redirect("signup")
-
-        # Create a new user object
-        myuser = User.objects.create_user(username, email, password)
-
-        messages.success(request, "Your account has been successfully created")
-        return redirect("login")
-
-    return render(request, "signup.html")
-
-
-
-def Login(request):
-    if request.method == "POST":
+def login(request):
+    if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-
-        # Check if the username is empty
-        if not username:
-            messages.error(request, "Username cannot be empty")
-            return redirect("login")
-
-        # Check if the password is empty
-        if not password:
-            messages.error(request, "Password cannot be empty")
-            return redirect("login")
-
-        # Authenticate the user
-        user = authenticate(username=username, password=password)
-
-        # Check if the user exists
-        if user is None:
-            messages.error(request, "User does not exist")
-            return redirect("login")
-
-        # Login the user
-        login(request, user)
-        messages.success(request, "You have been successfully logged in")
-        return redirect("base")
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            messages.info(request, 'Sucessfully Logged in')
+            # email = request.user.email
+            # print(email)
+            # content = 'Hello ' + request.user.first_name + ' ' + request.user.last_name + '\n' + 'You are logged in in our site.keep connected and keep travelling.'
+            # send_mail('Alert for Login', content
+            #           , 'travellotours89@gmail.com', [email], fail_silently=True)
+            # dests = destination_preview.objects.all()
+            # return render(request, 'index.html',{'dests':dests})
+            return  redirect('index')
+        else:
+            messages.info(request, 'Invalid credential')
+            return redirect('login')
+    else:
+        return render(request, 'login.html')
 
 
-    return render(request, "login.html")
-
-
-def navbar(request):
-    return render(request, 'navbar.html')
-
-
-
+def logout(request):
+    auth.logout(request)
+    return redirect('index')
 
