@@ -43,8 +43,8 @@ class Category(models.Model):
     def __str__(self):
         return self.title 
 
-class Tags(models.Model):
-    pass
+# class Tags(models.Model):
+#     pass
 
 class Vendor(models.Model):
 
@@ -81,14 +81,14 @@ class Product(models.Model):
     old_price=models.DecimalField(max_digits=8,decimal_places=2,default="5.00")
 
     specifications = models.TextField(null=True, blank=True)
-    tags=models.ForeignKey(Tags, on_delete=models.SET_NULL,null=True)
+    # tags=models.ForeignKey(Tags, on_delete=models.SET_NULL,null=True)
 
     product_status=models.CharField(choices=STATUS,max_length=10,default="in_review")
     status=models.BooleanField(default=True) 
     featured=models.BooleanField(default=False)
 
     sku = ShortUUIDField(unique=True, length=4, max_length=10, prefix="sku", alphabet="abcdefgh12345")
-    date=models.DateTimeField(auto_now_add=True)
+    startDate=models.DateTimeField(null=True,blank=True)
     updated=models.DateTimeField(null=True,blank=True)
 
 
@@ -108,7 +108,7 @@ class Product(models.Model):
     
 class ProductImages(models.Model):
     images=models.ImageField(upload_to="product-images",default="product.jpg")
-    product=models.ForeignKey(Product, on_delete=models.SET_NULL,null=True)
+    product=models.ForeignKey(Product,related_name="p_images", on_delete=models.SET_NULL,null=True)
     date=models.DateTimeField(auto_now_add=True)
 
     class Meta:

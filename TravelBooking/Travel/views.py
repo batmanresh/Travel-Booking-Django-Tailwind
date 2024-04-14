@@ -1,22 +1,11 @@
-from django.shortcuts import render,redirect
-# from .models import destination_preview
-# from .models import detailed_desc
-# from .models import pessanger_detail
-# from .models import Cards
-# from .models import Transactions
-# from .models import NetBanking
+from django.shortcuts import render,redirect,get_object_or_404
+from .models import Product, Category, Vendor, ProductReview, ProductImages
 from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import *
-from django.utils.dateparse import parse_date
-from django.views.decorators.cache import cache_control
-from django.core.mail import send_mail
 from django import forms
-from django.forms.formsets import formset_factory
-from django.shortcuts import render
-from django.template import Library
-from datetime import datetime
+from django.db.models import Count
 
 
 
@@ -26,14 +15,38 @@ def base(request):
     return render(request, "base.html")
 
 def index(request):
-    return render(request, "index.html")
+    products=Product.objects.filter(product_status="published",featured=True)
 
-def destination_details(request):
-    return render(request, "destination_details.html")
+    context={
+        "products":products
+    }
 
-def destination(request):
-    return render(request, "destination.html")
+    return render(request, "index.html", context)
 
+def product_list_view(request):
+    products=Product.objects.filter(product_status="published")
+
+    context={
+        "products":products
+    }
+
+    return render(request, "product_list.html", context)
+
+def product_detail_view(request, pid):
+    product=Product.objects.get(pid=pid)
+    
+    p_image=product.p_images.all()
+
+    context={
+        "p":product,
+        "p_image":p_image,
+    }
+
+    return render(request,"product_detail.html",context)
+
+
+
+######################## SIGNUP ###############################
 
 def register(request):
     if request.method == 'POST':
@@ -63,6 +76,10 @@ def register(request):
 
     else:
         return render(request, 'register.html')
+    
+
+
+######################## LOGIN ###############################
 
 def login(request):
     if request.method == 'POST':
@@ -77,8 +94,6 @@ def login(request):
             # content = 'Hello ' + request.user.first_name + ' ' + request.user.last_name + '\n' + 'You are logged in in our site.keep connected and keep travelling.'
             # send_mail('Alert for Login', content
             #           , 'travellotours89@gmail.com', [email], fail_silently=True)
-            # dests = destination_preview.objects.all()
-            # return render(request, 'index.html',{'dests':dests})
             return  redirect('index')
         else:
             messages.info(request, 'Invalid credential')

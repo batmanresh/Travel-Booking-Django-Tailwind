@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static tailwind_tags %}
+{% block title %}
+    <title>Destinations</title>
+{% endblock %}
+{% tailwind_css %}  
+    
+
+{% block content %}
+<body class="bg-gray-100">
+
+    <div class="container mx-auto py-8">
+        <div class="bg-white p-6 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Product images -->
+            <div>
+                <h2 class="text-3xl font-semibold mb-2">{{ p.title }}</h2>
+                <div class="flex flex-wrap justify-center mb-6">
+                    {% for image in p.p_images.all %}
+                        <img src="{{ image.images.url }}" alt="Product Image" class="w-32 h-32 mx-2 my-2">
+                    {% empty %}
+                        <p>No images available</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Product details and Check Availability -->
+            <div>
+                <!-- Product details -->
+                <div >
+                    <p class="text-gray-700 mb-2">{{ p.description }}</p>
+                    <p class="text-gray-700 mb-2">Category: {{ p.category.title }}</p>
+                    <p class="text-gray-700 mb-2">Vendor: {{ p.vendor.title }}</p>
+                    <!-- You can add more product details here -->
+                </div>
+                <!-- Check Availability section -->
+                <div class="flex flex-col justify-between mt-6 md:mt-0">
+                    <form>
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <input type="date" name="check_in_date" class="rounded-l-lg p-2 border border-gray-200 bg-white" placeholder="Check-in Date">
+                            <input type="number" name="num_guests" class="p-2 border-t border-b border-r border-gray-200 bg-white" placeholder="Guests">
+                        </div>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Check Availability
+                        </button>
+                    </form>
+                    <div class="mt-4 text-gray-700 text-sm">
+                        <p>Enter your check-in date and number of guests to check availability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
