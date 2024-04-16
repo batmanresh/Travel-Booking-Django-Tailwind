@@ -1,5 +1,4 @@
 {% load static tailwind_tags %}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +12,12 @@
 
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-Gzz+3xkIs/BqR6T7t2EAxEu+5rVcQ/1w3t41Mi//9mRDxX1/tBJ8/l48x9zrfduq4syz4Uz8q9R0Ti2bOjMX7g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+	
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>	
 
 </head>
 
@@ -45,10 +49,10 @@
 				
 						{% if user.is_authenticated %}
 							<li class="relative">
-								<a id="profilebtn" href="#" class="hover:text-blue-500">Profile</a>
+								<a id="profilebtn" href="#" class="hover:text-blue-500"><i class="fas fa-user"></i>Profile</a>
 								<ul id="profileDropdown" class="absolute hidden bg-white shadow-md rounded mt-2">
 									<li><a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a></li>
-									<li><a href="{% url 'base' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a></li>
+									<li><a href="{% url 'settings' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a></li>
 								</ul>
 							</li>
 						{% else %}
@@ -79,9 +83,29 @@
         var dropdown = document.getElementById('profileDropdown');
         dropdown.classList.toggle('hidden');
     });
-
-
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-sha256.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/enc-base64.min.js"></script>
+<script>
+	var hash = CryptoJS.HmacSHA256("Message", "secret");
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+	document.write(hashInBase64);
+</script>
+
+
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+<script>
+    {% for flashmsg in messages %}
+        alertify.set('notifier','position', 'top-right');
+        alertify.success('{{ flashmsg }}');
+		alertify.error('{{ flashmsg }}');
+    {% endfor %}
+</script>
+
+
+
 </body>
 
 </html>

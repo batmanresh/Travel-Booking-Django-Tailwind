@@ -68,7 +68,7 @@ class Vendor(models.Model):
     def __str__(self):
         return self.title 
     
-class Product(models.Model):
+class Product(models.Model):    
     pid = ShortUUIDField(unique=True, length=10, max_length=20, prefix="ven", alphabet="abcdefgh12345")
     title = models.CharField(max_length=100,default="Title Error")
     image = models.ImageField(upload_to=user_directory_path, default="product.jpg")
@@ -135,79 +135,19 @@ class ProductReview(models.Model):
     
 
 
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    check_in_date = models.DateField()
+    num_guests = models.IntegerField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Booking for {self.product.name}"
 
 
 
 
 
-
-# HOTEL_STATUS={
-#     ("Draft","Draft"),
-#     ("Disabled","Disabled"),
-#     ("Rejected","Rejected"),
-#     ("In Review","In Review"),
-#     ("Live","Live"),
-# }
-
-# class destination(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-#     name = models.CharField(max_length=100)
-#     description = models.TextField(null=True, blank=True)
-#     image = models.FileField(upload_to="destination_gallery")
-#     address = models.CharField(max_length=200)
-#     mobile = models.CharField(max_length=200)
-#     email = models.EmailField(max_length=100)
-    
-#     status = models.CharField(max_length=20, choices=HOTEL_STATUS, default="Live")
-    
-#     tags = models.CharField(max_length=200, help_text="Separate tags with comma")
-#     views = models.IntegerField(default=0)
-#     featured = models.BooleanField(default=False)
-
-    
-    
-#     hid = ShortUUIDField(unique=True, max_length=28)
-#     slug = models.SlugField(unique=True)
-#     date = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return self.name
-
-#     def save(self, *args, **kwargs):
-#         if not self.slug or not self.hid:
-#             uniqueid = shortuuid.uuid()[:4]
-#             self.slug = slugify(self.name + "-" + str(uniqueid).lower())
-#             self.hid = uniqueid
-        
-#         super(destination, self).save(*args, **kwargs)
-
-#     def thumbnail(self):
-#         return mark_safe("<img src='%s' width='50' height='50' style='object-fit: cover; border-radius: 6px;' />" % (self.image.url))
-
-# class destination_preview(models.Model):
-
-#     id = models.IntegerField(primary_key=True)
-#     country = models.CharField(max_length=20)
-#     img1 = models.ImageField(upload_to='pics')
-#     img2 = models.ImageField(upload_to='pics')
-#     number = models.IntegerField(default=2)
-
-#     class Meta:
-#         app_label = 'Travel'
-
-# class Detailed_desc(models.Model):
-#     dest_id = models.AutoField(primary_key=True)
-#     country = models.CharField(max_length=20)
-#     days = models.IntegerField(default=5)
-#     price = models.IntegerField(default=20000)
-#     rating = models.IntegerField(default=5)
-#     dest_name = models.CharField(max_length=25)
-#     img1=models.ImageField(upload_to='pics')
-#     img2 = models.ImageField(upload_to='pics')
-#     desc = models.TextField()
-#     day1= models.CharField(max_length=200)
-#     day2 = models.CharField(max_length=200)
-#     day3 = models.CharField(max_length=200)
-#     day4 = models.CharField(max_length=200)
-#     day5 = models.CharField(max_length=200)
-#     day6 = models.CharField(max_length=200)

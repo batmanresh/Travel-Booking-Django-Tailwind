@@ -4,6 +4,9 @@
     <title>Destinations</title>
 {% endblock %}
 {% tailwind_css %}  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+	<!-- Default theme -->
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
     
 
 {% block content %}
@@ -33,10 +36,12 @@
                 </div>
                 <!-- Check Availability section -->
                 <div class="flex flex-col justify-between mt-6 md:mt-0">
-                    <form>
+                   
+                    <form action="{% url 'booking_detail' p.pid %}" method="POST">
                         {% csrf_token %}
+                        <p class=""  name="pid">{{p.pid}}</p>
                         <div class="mb-2">
-                            <input type="date" name="check_in_date" class="rounded-l-lg p-2 border border-gray-200 bg-white" placeholder="Check-in Date">
+                            <input type="date" name="startDate" class="rounded-l-lg p-2 border border-gray-200 bg-white" placeholder="Check-in Date">
                             <input type="number" name="num_guests" class="p-2 border-t border-b border-r border-gray-200 bg-white" placeholder="Guests">
                         </div>
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -50,4 +55,5 @@
             </div>
         </div>
     </div>
+</body>
 {% endblock %}

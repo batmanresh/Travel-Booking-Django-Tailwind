@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static tailwind_tags %}
+{% block title %}
+    <title>Settings</title>
+{% endblock %}
+{% tailwind_css %}  
+    
+
+{% block content %}
+<body class="bg-gray-100">
+
+<div class="flex h-screen">
+    <!-- Sidebar -->
+    <nav class="w-1/4 bg-gray-800 text-gray-100 py-10">
+        <ul class="space-y-4">
+            <li><a href="#" class="block px-4 py-2 hover:bg-gray-700">Profile</a></li>
+            <li><a href="{% url 'change_password' %}" class="block px-4 py-2 hover:bg-gray-700">Change Password</a></li>
+            <li><a href="{% url 'delete_account' %}" class="block px-4 py-2 hover:bg-gray-700">Delete Account</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Profile Content -->
+    <div class="flex-1 p-10">
+        <h1 class="text-2xl font-bold mb-5">Profile</h1>
+        <div class="flex items-center mb-5">
+            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-20 h-20 rounded-full mr-4">
+            <div>
+                <h2 class="text-xl font-semibold">{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="text-gray-500">{{ user.email }}</p>
+                <p class="text-gray-500">{{ user.username }}</p>
+            </div>
+        </div>
+        <button id="editProfileBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Edit Profile</button>
+    </div>
+</div>
+
+<!-- Modal for Edit Profile -->
+<div id="editProfileModal" class="fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50">
+    <div class="bg-white p-8 rounded max-w-md">
+        <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+        <form id="editProfileForm">
+            <div class="mb-4">
+                <label for="firstName" class="block text-sm font-semibold">First Name</label>
+                <input type="text" id="firstName" name="firstName" class="w-full border rounded px-3 py-2">
+            </div>
+            <div class="mb-4">
+                <label for="lastName" class="block text-sm font-semibold">Last Name</label>
+                <input type="text" id="lastName" name="lastName" class="w-full border rounded px-3 py-2">
+            </div>
+            <div class="mb-4">
+                <label for="profilePicture" class="block text-sm font-semibold">Profile Picture</label>
+                <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="w-full border rounded px-3 py-2">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Changes</button>
+        </form>
+        <button id="closeModalBtn" class="bg-gray-500 text-white px-4 py-2 rounded mt-4">Close</button>
+    </div>
+</div>
+
+<script>
+    // Get elements
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const editProfileModal = document.getElementById('editProfileModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Show edit profile modal
+    editProfileBtn.addEventListener('click', () => {
+        editProfileModal.classList.remove('hidden');
+    });
+
+    // Close modal
+    closeModalBtn.addEventListener('click', () => {
+        editProfileModal.classList.add('hidden');
+    });
+
+    // Handle form submission
+    const editProfileForm = document.getElementById('editProfileForm');
+    editProfileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Handle form submission using JavaScript or AJAX request
+    });
+</script>
+{% endblock %}
+
+

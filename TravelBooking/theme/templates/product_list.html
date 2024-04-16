@@ -4,6 +4,9 @@
     <title>Destinations</title>
 {% endblock %}
 {% tailwind_css %}  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+	<!-- Default theme -->
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
     
 
 {% block content %}
@@ -25,7 +28,7 @@
         </div>
     </div>
 </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 pl-20 gap-6  ">
     {% for product in products %}
         <div class="bg-white p-6 rounded-lg shadow-md">
             <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full mb-4 rounded">
