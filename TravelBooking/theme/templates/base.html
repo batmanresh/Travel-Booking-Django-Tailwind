@@ -100,7 +100,6 @@
     {% for flashmsg in messages %}
         alertify.set('notifier','position', 'top-right');
         alertify.success('{{ flashmsg }}');
-		alertify.error('{{ flashmsg }}');
     {% endfor %}
 </script>
 

@@ -9,9 +9,9 @@
     {%tailwind_css%}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-    
-
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+	
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>	
 </head>
 <body class="bg-gray-100">
     <div class="flex justify-center items-center h-screen">
@@ -34,10 +34,6 @@
                 </div>
                 <div class="text-sm text-center">
                     {% for message in messages %}
-                        <!-- swal.fire({
-                            icon: {{message.error}}, 
-                            title: {{message}}, 
-                            text: "{{message.error}}}); -->
                     {% endfor %}
                 </div>
             </form>
@@ -46,26 +42,11 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script>
-        console.log("Script executing...");
-        {% for message in messages %}
-            console.log("Message: ", {{ message }});
-            {% if message.tags == 'success' %}
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: '{{ message }}'
-                });
-                console.log("Success message displayed.");
-            {% elif message.tags == 'error' %}
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: '{{ message }}'
-                });
-                console.log("Error message displayed.");
-            {% endif %}
+        {% for flashmsg in messages %}
+            alertify.set('notifier','position', 'top-right');
+            alertify.success('{{ flashmsg }}');
         {% endfor %}
     </script>
     
