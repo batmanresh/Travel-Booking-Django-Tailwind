@@ -1,0 +1,208 @@
+{% extends 'base.html' %} {% load static %}
+<!-- Load static files if necessary -->
+
+{% block content %}
+<div class="container mx-auto mt-10">
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <h1 class="text-xl text-center font-bold mb-4">
+      Booking Details for {{ product.title }} {{package_id}}
+    </h1>
+    <div class="w-full">
+      <img
+        class="h-96 w-full object-cover rounded-lg"
+        src="{{product.image.url}}"
+        alt="Image of {{ product.title }}"
+      />
+    </div>
+    <div class="border p-4 mt-4 rounded-md bg-white shadow-md">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+        <div class="order-2 md:order-1">
+          <p class="font-semibold text-gray-700">Total Cost:</p>
+          <p class="text-gray-600">Rs. {{ total_price }}</p>
+        </div>
+        <!-- Date -->
+        <div class="order-2 md:order-1">
+          <p class="font-semibold text-gray-700">Date:</p>
+          <p class="text-gray-600">{{ start_date }}</p>
+        </div>
+
+        <!-- Number of Guests -->
+        <div class="order-1 md:order-2">
+          <p class="font-semibold text-gray-700">Number of Guests:</p>
+          <p class="text-gray-600">{{ num_guests }}</p>
+        </div>
+
+        <!-- Description -->
+        <div class="order-4 md:order-3">
+          <p class="font-semibold text-gray-700">Description:</p>
+          <p class="text-gray-600">{{ product.description }}</p>
+        </div>
+
+        <!-- Category -->
+        <div class="order-3 md:order-4">
+          <p class="font-semibold text-gray-700">Category:</p>
+          <p class="text-gray-600">{{ product.category.title }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form for customer details -->
+    <form
+      action="https://rc-epay.esewa.com.np/api/epay/main/v2/form"
+      method="POST"
+      class="mt-6"
+    >
+      {% csrf_token %}
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="customer_name"
+        >
+          Your Name
+        </label>
+        {% if user.is_authenticated %}
+        <input
+          type="text"
+          name="customer_name"
+          placeholder="Your Name"
+          required
+          value="{{ user.get_full_name }}"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
+      <div class="mb-6">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="customer_email"
+        >
+          Your Email
+        </label>
+        <input
+          type="email"
+          name="customer_email"
+          placeholder="Your Email"
+          required
+          value="{{ user.email }}"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+        />
+        {% endif %}
+      </div>
+
+      <!-- Payment Options -->
+      <div class="mb-6">
+        <span class="text-gray-700 text-sm font-bold mb-2"
+          >Payment Option:</span
+        >
+        <div class="mt-2">
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              class="form-radio"
+              name="payment_option"
+              value="prepay"
+              checked
+            />
+            <span class="ml-2">Pre-Payment</span>
+          </label>
+        </div>
+      </div>
+      <div class="hidden">
+        <input
+          type="text"
+          id="amount"
+          name="amount"
+          value="{{ total_price }}"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="tax_amount"
+          name="tax_amount"
+          value="0"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="total_amount"
+          name="total_amount"
+          value="{{ total_price }}"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="transaction_uuid"
+          name="transaction_uuid"
+          value="{{transaction_id}}"
+          readonly
+        />
+        <input
+          type="text"
+          id="product_code"
+          name="product_code"
+          value="EPAYTEST"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="product_service_charge"
+          name="product_service_charge"
+          value="0"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="product_delivery_charge"
+          name="product_delivery_charge"
+          value="0"
+          readonly
+          required
+        />
+        <input
+          type="text"
+          id="success_url"
+          name="success_url"
+          value="http://127.0.0.1:8000/payment-response/"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="failure_url"
+          name="failure_url"
+          value="http://127.0.0.1:8000/"
+          required
+          readonly
+        />
+        <input
+          type="text"
+          id="signed_field_names"
+          name="signed_field_names"
+          value="total_amount,transaction_uuid,product_code"
+          readonly
+        />
+        <input
+          type="text"
+          id="signature"
+          name="signature"
+          value="{{signature}}"
+          required
+          readonly
+        />
+      </div>
+
+      {% comment %} <input value="Submit" type="submit" /> {% endcomment %}
+      <button
+        type="submit"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      >
+        Submit Booking
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

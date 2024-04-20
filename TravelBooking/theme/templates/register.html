@@ -10,7 +10,7 @@
 	<!-- Default theme -->
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+<body class="bg-gradient-to-r from-blue-400 to-indigo-600 min-h-screen flex items-center justify-center">
     <form action="{% url 'register' %}" method="post" class="max-w-md w-full px-6 py-8 bg-white rounded-lg shadow-lg">
         {% csrf_token %}
         <h2 class="text-2xl font-semibold mb-6">Sign Up</h2>
@@ -47,12 +47,15 @@
         <p class="mt-4 text-sm text-center">Already have an account? <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-900">Login</a></p>
         
     </form>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+{% for flashmsg in messages %}
     <script>
-    {% for flashmsg in messages %}
+    
         alertify.set('notifier','position', 'top-right');
         alertify.success('{{ flashmsg }}');
-    {% endfor %}
-</script>
+    
+    </script>
+{% endfor %}
 
 </body>
 </html>

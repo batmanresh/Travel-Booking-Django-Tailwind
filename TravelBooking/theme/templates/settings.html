@@ -11,27 +11,39 @@
 
 <div class="flex h-screen">
     <!-- Sidebar -->
-    <nav class="w-1/4 bg-gray-800 text-gray-100 py-10">
+    <nav class="w-1/4 bg-gray-700 text-gray-100 py-10 px-4">
         <ul class="space-y-4">
-            <li><a href="#" class="block px-4 py-2 hover:bg-gray-700">Profile</a></li>
-            <li><a href="{% url 'change_password' %}" class="block px-4 py-2 hover:bg-gray-700">Change Password</a></li>
-            <li><a href="{% url 'delete_account' %}" class="block px-4 py-2 hover:bg-gray-700">Delete Account</a></li>
+            <li><a href="{% url 'settings' %}" class="block px-4 py-2 hover:bg-gray-700 hover:text-gray-300">Profile</a></li>
+            <li><a href="{% url 'change_password' %}" class="block px-4 py-2 hover:bg-gray-700 hover:text-gray-300">Change Password</a></li>
+            <li><a href="{% url 'delete_account' %}" class="block px-4 py-2 hover:bg-gray-700 hover:text-gray-300">Delete Account</a></li>
+            <li><a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-gray-700 hover:text-gray-300">Logout</a></li>
+
         </ul>
     </nav>
     
     <!-- Profile Content -->
-    <div class="flex-1 p-10">
-        <h1 class="text-2xl font-bold mb-5">Profile</h1>
-        <div class="flex items-center mb-5">
-            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="w-20 h-20 rounded-full mr-4">
-            <div>
-                <h2 class="text-xl font-semibold">{{ user.first_name }} {{ user.last_name }}</h2>
-                <p class="text-gray-500">{{ user.email }}</p>
-                <p class="text-gray-500">{{ user.username }}</p>
+   <div class="flex-1 p-10">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Profile Information</h2>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center border-b border-gray-200 py-2">
+                <p class="text-gray-600 font-semibold">Name:</p>
+                <p class="text-gray-800">{{ user.first_name }} {{ user.last_name }}</p>
+            </div>
+            <div class="flex justify-between items-center border-b border-gray-200 py-2">
+                <p class="text-gray-600 font-semibold">Email:</p>
+                <p class="text-gray-800">{{ user.email }}</p>
+            </div>
+            <div class="flex justify-between items-center py-2">
+                <p class="text-gray-600 font-semibold">Username:</p>
+                <p class="text-gray-800">{{ user.username }}</p>
             </div>
         </div>
-        <button id="editProfileBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Edit Profile</button>
     </div>
+    
+    <button id="editProfileBtn" class="bg-blue-500 text-white px-4 py-2 rounded mt-6 hover:bg-blue-700">Edit Profile</button>
+</div>
+
 </div>
 
 <!-- Modal for Edit Profile -->
@@ -47,39 +59,58 @@
                 <label for="lastName" class="block text-sm font-semibold">Last Name</label>
                 <input type="text" id="lastName" name="lastName" class="w-full border rounded px-3 py-2">
             </div>
-            <div class="mb-4">
-                <label for="profilePicture" class="block text-sm font-semibold">Profile Picture</label>
-                <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="w-full border rounded px-3 py-2">
-            </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Changes</button>
+
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Save Changes</button>
         </form>
-        <button id="closeModalBtn" class="bg-gray-500 text-white px-4 py-2 rounded mt-4">Close</button>
+        <button id="closeModalBtn" class="bg-gray-500 text-white px-4 py-2 rounded mt-4 hover:bg-gray-700">Close</button>
     </div>
 </div>
 
 <script>
-    // Get elements
-    const editProfileBtn = document.getElementById('editProfileBtn');
-    const editProfileModal = document.getElementById('editProfileModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
+    document.addEventListener('DOMContentLoaded', function() {
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const editProfileForm = document.getElementById('editProfileForm');
 
-    // Show edit profile modal
-    editProfileBtn.addEventListener('click', () => {
-        editProfileModal.classList.remove('hidden');
-    });
+        // Show edit profile modal
+        editProfileBtn.addEventListener('click', () => {
+            editProfileModal.classList.remove('hidden');
+        });
 
-    // Close modal
-    closeModalBtn.addEventListener('click', () => {
-        editProfileModal.classList.add('hidden');
-    });
+        // Close modal
+        closeModalBtn.addEventListener('click', () => {
+            editProfileModal.classList.add('hidden');
+        });
 
-    // Handle form submission
-    const editProfileForm = document.getElementById('editProfileForm');
-    editProfileForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // Handle form submission using JavaScript or AJAX request
+        // Handle form submission
+        editProfileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(editProfileForm);
+            fetch(editProfileForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle successful form submission
+                    // For example, display a success message or redirect to another page
+                    console.log('Form submitted successfully');
+                    // You can add your own success handling here
+                } else {
+                    // Handle form submission error
+                    // For example, display an error message to the user
+                    console.error('Form submission failed');
+                    // You can add your own error handling here
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
     });
 </script>
+
 {% endblock %}
 
 

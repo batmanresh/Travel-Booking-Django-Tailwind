@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
     'Travel',
-    
+    'sweetify',
+
+
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -142,8 +144,8 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
-MEDIA_URL ='/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -154,3 +156,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger'
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # This is typically missing and crucial.
+EMAIL_HOST_USER = 'np03cs4s220121@heraldcollege.edu.np'
+EMAIL_HOST_PASSWORD = 'qyewmcnmxxovgfwe'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

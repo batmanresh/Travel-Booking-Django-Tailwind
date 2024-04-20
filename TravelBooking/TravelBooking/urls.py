@@ -18,7 +18,8 @@ urlpatterns = [
     path('change_password/', views.change_password, name='change_password'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('checkout/', views.checkout, name='checkout'),
-    path('booking_detail/<str:package_id>/', views.booking_detail, name='booking_detail'),
+    path('customize/', views.customize, name='customize'),
+    
 
 ]
 

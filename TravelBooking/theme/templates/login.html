@@ -6,17 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
-    {%tailwind_css%}
+    {% tailwind_css %}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-	
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>	
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>	
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-r from-blue-400 to-indigo-600">
     <div class="flex justify-center items-center h-screen">
-        <div class="max-w-md w-full p-8 bg-white rounded-lg shadow-lg">
-            <h1 class="text-2xl font-semibold mb-4 text-center">Login to Adven</h1>
+        <div class="max-w-md w-full p-8 bg-white rounded-lg shadow-lg relative">
+            <!-- Button to Close -->
+            <div class="absolute top-0 right-0 mt-4 mr-4">
+                <a href="{% url 'index' %}" class="text-gray-600 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </a>
+            </div>
+            <!-- End of Button to Close -->
+
+            <h1 class="text-2xl font-semibold mb-4 text-center">Customer Login</h1>
             <form action="{% url 'login' %}" method="post" class="space-y-4">
                 {% csrf_token %}
                 <div>
@@ -37,18 +46,26 @@
                     {% endfor %}
                 </div>
             </form>
-            <div class="flex justify-between mt-4">
-                <p class="text-sm">Don't have an account? <a href="{% url 'register' %}" class="text-indigo-600 hover:text-indigo-900">Sign Up</a></p>
+            <div class="flex justify-center mt-6">
+                <p class="text-sm text-gray-600">Don't have an account? <a href="{% url 'register' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Sign Up</a></p>
             </div>
+            <div class="flex justify-center items-center mt-4">
+                <div class="border-t border-gray-300 w-full"></div>
+                <p class="text-sm text-gray-600 px-4">Or</p>
+                <div class="border-t border-gray-300 w-full"></div>
+            </div>
+            <div class="flex justify-center mt-4">
+                <p class="text-sm text-gray-600">Login as a <a href="{% url 'vendor_login' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Vendor</a></p>
+            </div>
+            
         </div>
     </div>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    {% for flashmsg in messages %}
     <script>
-        {% for flashmsg in messages %}
             alertify.set('notifier','position', 'top-right');
             alertify.success('{{ flashmsg }}');
-        {% endfor %}
     </script>
-    
+    {% endfor %}
 </body>
 </html>

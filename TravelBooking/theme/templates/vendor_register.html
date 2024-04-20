@@ -1,0 +1,66 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor SignUp</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+	<!-- Default theme -->
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+</head>
+<body class="bg-gradient-to-r from-blue-400 to-indigo-600 min-h-screen flex items-center justify-center">
+    <form action="{% url 'vendor_register' %}" method="post" enctype="multipart/form-data" class="max-w-md w-full px-6 py-8 bg-white rounded-lg shadow-lg">
+        {% csrf_token %}
+        <h2 class="text-2xl font-semibold mb-6">Vendor Sign Up</h2>
+        <div class="mt-4 text-red-500">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        <div class="mb-4">
+            <input type="text" name="first_name" placeholder="First Name" 
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-4">
+            <input type="text" name="last_name" placeholder="Last Name" 
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-4">
+            <input type="text" name="username" placeholder="Username" minlength="3" maxlength="15" required 
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-4">
+            <input type="email" name="email" placeholder="Email Address" 
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-4">
+            <input type="password" name="password1" placeholder="Password" minlength="5" maxlength="20" required 
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-6">
+            <input type="password" name="password2" placeholder="Confirm Password" minlength="5" maxlength="20" required 
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-4">
+            <label for="pan_card">Upload PAN Card Image:</label>
+            <input type="file" name="pan_card" id="pan_card" accept="image/*" required>
+        </div>
+        <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
+        <p class="mt-4 text-sm text-center">Already have an account? <a href="{% url 'vendor_login' %}" class="text-indigo-600 hover:text-indigo-900">Login</a></p>
+        
+    </form>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    {% for message in messages %}
+    <script>
+    
+        alertify.set('notifier','position', 'top-right');
+        alertify.success('{{ message }}');
+    
+    </script>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!-- vendor_dashboard.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Sidebar -->
+    <div class="bg-gray-700 text-white h-full w-64 fixed left-0 top-0 overflow-y-auto">
+        <div class="p-4">
+            <h1 class="text-2xl font-semibold">Vendor Dashboard</h1>
+        </div>
+        <ul class="py-4">
+            <li>
+                <a href="{% url 'base' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Products</a>
+            </li>
+            <li>
+                <a href="{% url 'base' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Add Product</a>
+            </li>
+            <li>
+                <a href="{% url 'base' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Customized Packages</a>
+            </li>
+            <li>
+                <a href="{% url 'base' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Settings</a>
+            </li>
+        </ul>
+        <div class="absolute bottom-0 p-4">
+            <a href="{% url 'logout' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Logout</a>
+        </div>
+    </div>
+    <!-- Content -->
+    <div class="ml-64">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-2">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-semibold">Vendor Dashboard</h1>
+                </div>
+            </div>
+        </nav>
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Your content here -->
+        </div>
+    </div>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    {% for flashmsg in messages %}
+    <script>
+    
+        alertify.set('notifier','position', 'top-right');
+        alertify.success('{{ flashmsg }}');
+    
+    </script>
+    {% endfor %}
+</body>
+</html>

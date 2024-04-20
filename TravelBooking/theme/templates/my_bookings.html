@@ -1,0 +1,45 @@
+<!-- Inside my_bookings.html -->
+
+{% extends 'base.html' %}
+<!-- Assuming you have a base.html to extend -->
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+  <div
+    class="flex justify-between items-center border-b-2 border-gray-200 py-2"
+  >
+    <h2 class="text-2xl font-semibold text-gray-900">My Bookings</h2>
+  </div>
+
+  {% if bookings %}
+  <div class="mt-4">
+    <ul>
+      {% for booking in bookings %}
+      <li class="bg-white shadow overflow-hidden rounded-md px-6 py-4 mb-4">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+          Booking ID: {{ booking.id }} - {{ booking.product.title }}
+        </h3>
+
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+          Date: {{ booking.check_in_date }}
+        </p>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+          Payment Status:
+          <span
+            class="text-sm font-semibold {% if booking.transaction_status == 'Completed' %} text-green-500 {% else %} text-red-500 {% endif %}"
+          >
+            {{ booking.transaction_status }}
+          </span>
+        </p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  <div class="bg-white shadow overflow-hidden rounded-md p-4">
+    <p class="text-gray-500">You have no bookings yet.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -22,11 +22,10 @@
 </head>
 
 <body class="bg-gray-100">
-<div class="super_container" >
 
 		<!-- Header -->
-	<header class="bg-white shadow-md">
-		<div class="container mx-auto px-24 py-4">
+		<header class="bg-white shadow-md">
+			<div class="container mx-auto px-6 lg:px-8 xl:px-12 2xl:px-24 py-4">
 			<div class="flex items-center justify-between">
 				<!-- Logo -->
 				<div class="flex items-center">
@@ -40,12 +39,11 @@
 				
 				<!-- Navigation -->
 				<nav class="main_nav">
-					<ul class="flex justify-center items-center space-x-6 text-gray-800">
+					<ul class="flex justify-center lg:justify-between items-center lg:space-x-6 lg:text-base md:space-x-6 text-sm">
 						<li><a href="{% url 'index' %}" class="hover:text-blue-500">Home</a></li>
 						<li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Adventure</a></li>
-						<li><a href="{% url 'base' %}" class="hover:text-blue-500">Compare</a></li>
-						<li><a href="{% url 'base' %}" class="hover:text-blue-500">Customize</a></li>
-						<li><a href="{% url 'base' %}" class="hover:text-blue-500">My Booking</a></li>
+						<li><a href="{% url 'customize' %}" class="hover:text-blue-500">Customize</a></li>
+						<li><a href="{% url 'my_bookings' %}" class="hover:text-blue-500">My Booking</a></li>
 				
 						{% if user.is_authenticated %}
 							<li class="relative">
@@ -96,12 +94,14 @@
 
 
 <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-<script>
-    {% for flashmsg in messages %}
-        alertify.set('notifier','position', 'top-right');
-        alertify.success('{{ flashmsg }}');
-    {% endfor %}
-</script>
+{% for flashmsg in messages %}
+	<script>
+		
+		alertify.set('notifier','position', 'top-right');
+		alertify.success('{{ flashmsg }}');
+		
+	</script>
+{% endfor %}
 
 
 

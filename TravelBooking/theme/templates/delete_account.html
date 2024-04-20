@@ -14,7 +14,8 @@
         <p class="mb-4">Are you sure you want to delete your account? This action cannot be undone.</p>
         <form method="post">
             {% csrf_token %}
-            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Delete Account</button>
+            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded mr-4">Delete Account</button>
+            <a href="{% url 'settings' %}" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Cancel</a>
         </form>
     </div>
 </div>

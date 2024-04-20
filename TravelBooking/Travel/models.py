@@ -9,6 +9,8 @@ from django.utils import timezone
 from shortuuid.django_fields import ShortUUIDField
 import shortuuid
 
+
+
 STATUS_CHOICE={
     ("process","Processing"),
     ("confirmed","Confirmed"),
@@ -42,9 +44,8 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title 
+    
 
-# class Tags(models.Model):
-#     pass
 
 class Vendor(models.Model):
 
@@ -57,7 +58,7 @@ class Vendor(models.Model):
     experience = models.CharField(max_length=100, default="100")
     authentic_rating = models.CharField(max_length=100, default="100")
 
-    user=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
+    vendor=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
 
     class Meta:
         verbose_name_plural="Vendors"
@@ -68,42 +69,47 @@ class Vendor(models.Model):
     def __str__(self):
         return self.title 
     
-class Product(models.Model):    
-    pid = ShortUUIDField(unique=True, length=10, max_length=20, prefix="ven", alphabet="abcdefgh12345")
-    title = models.CharField(max_length=100,default="Title Error")
-    image = models.ImageField(upload_to=user_directory_path, default="product.jpg")
-    description = models.TextField(null=True, blank=True,default="Contact vendor for more information.")
+class Product(models.Model):
+    pid = ShortUUIDField(unique=True, length=10, max_length=20,
+                         prefix="ven", alphabet="abcdefgh12345")
+    title = models.CharField(max_length=100, default="Title Error")
+    image = models.ImageField(
+        upload_to=user_directory_path, default="product.jpg")
+    description = models.TextField(
+        null=True, blank=True, default="Contact vendor for more information.")
 
-    user=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
-    category=models.ForeignKey(Category, on_delete=models.SET_NULL,null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True)
 
-    price=models.DecimalField(max_digits=8,decimal_places=2,default="1.00")
-    old_price=models.DecimalField(max_digits=8,decimal_places=2,default="5.00")
+    price = models.DecimalField(max_digits=8, decimal_places=2, default="1.00")
+    old_price = models.DecimalField(
+        max_digits=8, decimal_places=2, default="5.00")
 
     specifications = models.TextField(null=True, blank=True)
     # tags=models.ForeignKey(Tags, on_delete=models.SET_NULL,null=True)
+    is_available = models.BooleanField(default=True)  # Set a sensible default
+    product_status = models.CharField(
+        choices=STATUS, max_length=10, default="in_review")
+    status = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False)
 
-    product_status=models.CharField(choices=STATUS,max_length=10,default="in_review")
-    status=models.BooleanField(default=True) 
-    featured=models.BooleanField(default=False)
-
-    sku = ShortUUIDField(unique=True, length=4, max_length=10, prefix="sku", alphabet="abcdefgh12345")
-    startDate=models.DateTimeField(null=True,blank=True)
-    updated=models.DateTimeField(null=True,blank=True)
-
-
+    sku = ShortUUIDField(unique=True, length=4, max_length=10,
+                         prefix="sku", alphabet="abcdefgh12345")
+    startDate = models.DateTimeField(null=True, blank=True)
+    updated = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural="Products"
+        verbose_name_plural = "Products"
 
     def product_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' %(self.image.url))
+        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
 
     def __str__(self):
-        return self.title 
-    
+        return self.title
+
     def get_percentage(self):
-        new_price=(self.price/self.old_price)*100
+        new_price = (self.price/self.old_price)*100
         return new_price
     
 class ProductImages(models.Model):
@@ -142,11 +148,14 @@ class Booking(models.Model):
     num_guests = models.IntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    transaction_uuid = models.CharField(max_length=255, unique=True)
+    transaction_code = models.CharField(
+        max_length=255, null=True, blank=True)  # Optional, if needed
+    transaction_status = models.CharField(
+        max_length=50, null=True, blank=True)  # Optional, if needed
 
     def __str__(self):
-        return f"{self.user.username}'s Booking for {self.product.name}"
-
+        return f"{self.user.username}'s Booking for {self.product.title}"
 
 
 
