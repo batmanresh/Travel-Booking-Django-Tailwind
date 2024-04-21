@@ -29,3 +29,16 @@ def vendor_only(view_func):
         
     return wrapper_func
 
+def customer_only(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+
+        if group == 'customer':
+            return view_func(request, *args, **kwargs)
+        return HttpResponse('You are not authorized to view this page')
+        
+    return wrapper_func
+
+

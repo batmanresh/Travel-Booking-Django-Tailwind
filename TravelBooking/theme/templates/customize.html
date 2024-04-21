@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static tailwind_tags %}
 {% block title %}
-    <title>Customize Your Travel</title>
+    Customize Your Travel
 {% endblock %}
 {% tailwind_css %}  
 
@@ -12,7 +12,7 @@
         <div class="mx-auto max-w-md mb-8">
             <div class="bg-white bg-opacity-75 rounded-lg shadow-md p-6">
                 <!-- Form Starts -->
-                <form>
+                <form method="POST" action="{% url 'view_and_accept_form' %}">
                     {% csrf_token %}
                     <div class="mb-6">
                         <label for="destination" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>

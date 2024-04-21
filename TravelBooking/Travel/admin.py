@@ -13,7 +13,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title']
 
 class VendorAdmin(admin.ModelAdmin): 
-    list_display = ['title', 'vendor_image']
+    list_display = ['title','address','contact']
 
 class ProductReviewAdmin(admin.ModelAdmin): 
     list_display = ['user', 'product', 'review', 'rating']

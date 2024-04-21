@@ -23,13 +23,16 @@ from .utils import send_email_to_client
 from django.core.files.storage import FileSystemStorage
 from .forms import EditProfileForm 
 from .decorators import allowed_users,vendor_only
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from .forms import AddProductForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login
 
 
 
 
 # Create your views here.
+
 def base(request):
     return render(request, "base.html")
 
@@ -93,10 +96,10 @@ def compare_products(request):
         selected_product1 = Product.objects.get(id=selected_product1_id)
         selected_product2 = Product.objects.get(id=selected_product2_id)
         
-        # Perform comparison logic here
+        
         comparison_result = {}
 
-        # Example comparison logic (you can adjust this based on your requirements)
+        
         if selected_product1.price < selected_product2.price:
             comparison_result['price'] = f"{selected_product1.title} is cheaper than {selected_product2.title}"
         elif selected_product1.price > selected_product2.price:
@@ -118,7 +121,7 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your profile has been updated successfully.')
-            return redirect('settings')  # Redirect to the user's profile page
+            return redirect('settings')  
         else:
             messages.error(request, 'Error updating profile. Please correct the errors below.')
     else:
@@ -132,11 +135,10 @@ def edit_profile(request):
 @login_required(login_url="login")
 def my_bookings(request):
     if not request.user.is_authenticated:
-        # Redirect to login page or show an error
-        # Replace 'login_url' with your actual login page URL
+        
         return redirect('login_url')
 
-    # Retrieve all bookings for the current user
+    
     bookings = Booking.objects.filter(
         user=request.user).order_by('-created_at')
 
@@ -186,15 +188,15 @@ def booking_details(request, product_id):
 
 
 def calculate_price(product, num_guests):
-    # Assuming 'base_price' is a field in your 'Product' model
+    
     base_price = product.price
     price_per_guest = base_price
     total_price = price_per_guest * num_guests
     print(total_price)
 
-    # Add additional logic for seasonal pricing or discounts
+    
     if num_guests > 4:
-        discount_factor = Decimal('0.90')  # Example: Bulk booking discount
+        discount_factor = Decimal('0.90')  
         total_price *= discount_factor  # 10% discount for groups larger than four
 
     return total_price
@@ -281,7 +283,7 @@ def submit_booking(request):
         product_id = request.POST.get('product_id')
         check_in_date = request.POST.get('check_in_date')
         num_guests = int(request.POST.get('num_guests')
-                         )  # Ensure conversion to int
+                         )  
 
         product = Product.objects.get(pk=product_id)
         total_price = calculate_price(product, num_guests)
@@ -295,11 +297,11 @@ def submit_booking(request):
             special_requests=request.POST.get('special_requests', ''),
         )
 
-        # Redirect to a booking confirmation page
+        
         return redirect('booking_confirmation', booking_id=booking.id)
 
     else:
-        # Handle GET request or show form again
+        
         return render(request, 'booking_form.html')
     
 
@@ -312,7 +314,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # To keep the user logged in
+            update_session_auth_hash(request, user)  
             messages.success(request, 'Your password was successfully changed!')
             return redirect('settings')
         else:
@@ -334,7 +336,7 @@ def delete_account(request):
         user = request.user
         user.delete()
         messages.success(request, 'Your account has been deleted successfully.')
-        return redirect('index')  # Redirect to the homepage or login page after account deletion
+        return redirect('index')  
     return render(request, 'delete_account.html')
 
 
@@ -346,7 +348,39 @@ def customize(request):
 
 
 
-######################## SIGNUP ###############################
+
+
+
+
+
+
+
+
+
+######################################################################## ADD PRODUCT ###############################################################################
+
+def add_product(request):
+    if request.method == "POST":
+        form = AddProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_form = form.save(commit=False)
+            new_form.user = request.user
+            new_form.save()
+            form.save_m2m()
+            messages.success(request, "Product added successfully.")
+            return redirect("vendor_dashboard")  
+    else:
+        form = AddProductForm()
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "vendor_add_product.html", context)
+
+
+
+######################################################################## SIGNUP ###############################################################################
 
 from django.contrib import messages
 
@@ -361,6 +395,7 @@ def register(request):
             email = request.POST['email']
             password1 = request.POST['password1']
             password2 = request.POST['password2']
+            phone_number = request.POST['phone_number']  
 
             if password1 == password2:
                 if User.objects.filter(username=username).exists():
@@ -372,6 +407,7 @@ def register(request):
                 else:
                     user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name,
                                                     first_name=first_name)
+                    user.profile.phone_number = phone_number  
                     user.save()
                     messages.success(request, 'Account created successfully. You can now login.')
                     return redirect('login')
@@ -382,10 +418,13 @@ def register(request):
         else:
             return render(request, 'register.html')
 
+
         
 
 
 ######################## LOGIN ###############################
+
+
 
 def login(request):
     if request.user.is_authenticated:
@@ -394,16 +433,21 @@ def login(request):
         if request.method == 'POST':
             username = request.POST['username']
             password = request.POST['password']
-            user = auth.authenticate(username=username, password=password)
+            user = authenticate(username=username, password=password)
             if user is not None:
-                auth.login(request, user)
-                messages.success(request, 'Sucessfully Logged in')
-                return  redirect('index')
+                if user.groups.filter(name__in=['vendor', 'admin']).exists():
+                    messages.error(request, 'Vendors and admins are not allowed to log in.')
+                    return redirect('login')
+                else:
+                    auth_login(request, user)
+                    messages.success(request, 'Successfully logged in.')
+                    return redirect('index')
             else:
-                messages.error(request, 'Invalid credential')
+                messages.error(request, 'Invalid credentials.')
                 return redirect('login')
         else:
             return render(request, 'login.html')
+
 
 
 def logout(request):
@@ -428,7 +472,7 @@ def vendor_login(request):
         password = request.POST['password']
         user = auth.authenticate(username=username, password=password)
         if user is not None and user.groups.filter(name='vendor').exists():
-            auth.login(request, user)  # Authentication handled by Django's middleware
+            auth.login(request, user)  
             messages.success(request, 'Successfully logged in as vendor')
             return redirect('vendor_dashboard')
         else:
@@ -454,7 +498,7 @@ def vendor_register(request):
         email = request.POST['email']
         password1 = request.POST['password1']
         password2 = request.POST['password2']
-        pan_card = request.FILES['pan_card']  # Access the uploaded PAN card image
+        pan_card = request.FILES['pan_card']  
 
         if password1 == password2:
             if User.objects.filter(username=username).exists():
@@ -464,12 +508,12 @@ def vendor_register(request):
                 messages.error(request, 'Email already Taken')
                 return redirect('vendor_register')
             else:
-                # Save the uploaded PAN card image to the media directory
+                
                 fs = FileSystemStorage()
                 filename = fs.save(pan_card.name, pan_card)
 
                 user = User.objects.create_user(username=username, password=password1, email=email, first_name=first_name)
-                # Add additional fields specific to vendor registration to the user object
+                
                 user.save()
                 messages.success(request, 'Registration successful. Please login.')
                 return redirect('vendor_login')
@@ -479,3 +523,7 @@ def vendor_register(request):
 
     else:
         return render(request, 'vendor_register.html')
+
+
+
+

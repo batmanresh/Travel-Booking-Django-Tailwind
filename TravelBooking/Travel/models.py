@@ -51,53 +51,41 @@ class Vendor(models.Model):
 
     vid = ShortUUIDField(unique=True, length=10, max_length=20, prefix="ven", alphabet="abcdefgh12345")
     title = models.CharField(max_length=100,default="Title Error")
-    image = models.ImageField(upload_to=user_directory_path,default=None,blank=True)
+
     description = models.TextField(null=True, blank=True,default="No Description")
     address = models.CharField(max_length=106, default="123 Main Street.")
     contact = models.CharField(max_length=100, default="+123 (456) 789")
     experience = models.CharField(max_length=100, default="100")
-    authentic_rating = models.CharField(max_length=100, default="100")
 
     user=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
 
     class Meta:
         verbose_name_plural="Vendors"
 
-    def vendor_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' %(self.image.url))
+    
 
     def __str__(self):
         return self.title 
     
 class Product(models.Model):
-    pid = ShortUUIDField(unique=True, length=10, max_length=20,
-                         prefix="ven", alphabet="abcdefgh12345")
+    pid = ShortUUIDField(unique=True, length=10, max_length=20,prefix="ven", alphabet="abcdefgh12345")
     title = models.CharField(max_length=100, default="Title Error")
-    image = models.ImageField(
-        upload_to=user_directory_path, default="product.jpg")
-    description = models.TextField(
-        null=True, blank=True, default="Contact vendor for more information.")
+    image = models.ImageField(upload_to=user_directory_path, default="product.jpg")
+    description = models.TextField(null=True, blank=True, default="Contact vendor for more information.")
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
 
     price = models.DecimalField(max_digits=8, decimal_places=2, default="1.00")
-    old_price = models.DecimalField(
-        max_digits=8, decimal_places=2, default="5.00")
+    old_price = models.DecimalField(max_digits=8, decimal_places=2, default="5.00")
 
     specifications = models.TextField(null=True, blank=True)
-    # tags=models.ForeignKey(Tags, on_delete=models.SET_NULL,null=True)
-    is_available = models.BooleanField(default=True)  # Set a sensible default
+    is_available = models.BooleanField(default=True)  
     product_status = models.CharField(
         choices=STATUS, max_length=10, default="in_review")
     status = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
 
-    sku = ShortUUIDField(unique=True, length=4, max_length=10,
-                         prefix="sku", alphabet="abcdefgh12345")
-    startDate = models.DateTimeField(null=True, blank=True)
-    updated = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Products"
@@ -162,4 +150,15 @@ class Booking(models.Model):
 
 
 
+
+class TemporaryFormSubmission(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    destination = models.CharField(max_length=100)
+    budget = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.IntegerField()
+    travel_date = models.DateField()
+    interests = models.TextField()
+
+    def __str__(self):
+        return f"Temporary Form Submission - {self.user.username}"
 

@@ -1,112 +1,184 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-	{% block title %}
-
-	{% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	{% tailwind_css %}
+    <title>{% block title %}{% endblock %}</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-Gzz+3xkIs/BqR6T7t2EAxEu+5rVcQ/1w3t41Mi//9mRDxX1/tBJ8/l48x9zrfduq4syz4Uz8q9R0Ti2bOjMX7g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Load Tailwind CSS -->
+    {% tailwind_css %}
 
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-	
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>	
+    <!-- Include additional CSS frameworks or libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
 
 </head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<body class="bg-gray-100">
-
-		<!-- Header -->
-		<header class="bg-white shadow-md">
-			<div class="container mx-auto px-6 lg:px-8 xl:px-12 2xl:px-24 py-4">
-			<div class="flex items-center justify-between">
-				<!-- Logo -->
-				<div class="flex items-center">
-					<a href="{% url 'index' %}" class="flex items-center text-gray-800 hover:text-gray-900">
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M1 15.5c1.333-2 2-3.5 4-4.5s3-1.5 5-2.5c2-1 3.667-1.333 5-2.5 1.333-1.167 2-2.5 2-3.5s-0.667-2.5-2-3.5c-1.333-1-3-1.333-5-2.5C9 0.5 7.333 0 5 0c-1.333 0-2.333 0.5-3 1.5C1.333 3 1 4 1 5.5s0.667 2.5 2 3.5c1.333 1 2.667 1.333 4 2.5s2.667 2 4 4.5c1.333 2.5 2 4 2 6s-0.667 2.5-2 4c-1.333 1.5-2.667 2-4 3s-2.667 1-4 1-2.667-0.5-4-1-2.667-1.5-4-1c-1.333-0.5-2-1.5-2-3.5s0.667-3.5 2-6zM18.5 20c1-1.5 1.5-3 1.5-5s-0.5-3.5-1.5-5c-1-1.5-2.5-2.5-4-3.5-1.5-1-3-1.5-4.5-2.5-1.5-1-2.5-2-3.5-3.5C4 0.5 3.5 0 3 0c-1 0-1.5 0.5-2.5 1s-2 1-3 2.5C-0.5 5.5 0 6 0 7.5s0.5 3 1.5 4c1 1.5 2.5 2.5 4 3.5 1.5 1 3 1.5 4.5 2.5 1.5 1 2.5 2 3.5 3.5s1.5 3 2.5 4z" clip-rule="evenodd"/>
-						</svg>
-						<span class="text-xl font-semibold">Adven</span>
-					</a>
-				</div>
+<header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-24 py-4">
+        <div class="flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="{% url 'index' %}" class="flex items-center text-gray-800 hover:text-gray-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M1 15.5c1.333-2 2-3.5 4-4.5s3-1.5 5-2.5c2-1 3.667-1.333 5-2.5 1.333-1.167 2-2.5 2-3.5s-0.667-2.5-2-3.5c-1.333-1-3-1.333-5-2.5C9 0.5 7.333 0 5 0c-1.333 0-2.333 0.5-3 1.5C1.333 3 1 4 1 5.5s0.667 2.5 2 3.5c1.333 1 2.667 1.333 4 2.5s2.667 2 4 4.5c1.333 2.5 2 4 2 6s-0.667 2.5-2 4c-1.333 1.5-2.667 2-4 3s-2.667 1-4 1s-2.667-0.5-4-1s-2.667-1.5-4-1c-1.333-0.5-2-1.5-2-3.5s0.667-3.5 2-6zM18.5 20c1-1.5 1.5-3 1.5-5s-0.5-3.5-1.5-5c-1-1.5-2.5-2.5-4-3.5c-1.5-1-3-1.5-4.5-2.5c-1.5-1-2.5-2-3.5-3.5s-1.5-3-1.5-5.5z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-xl font-semibold mr-10">Adven</span>
+					<span class="text-gray-900" id="greeting"></span> 
+                </a>
+            </div>
+            
+            <!-- Navigation -->
+			
+			 
 				
-				<!-- Navigation -->
-				<nav class="main_nav">
-					<ul class="flex justify-center lg:justify-between items-center lg:space-x-6 lg:text-base md:space-x-6 text-sm">
-						<li><a href="{% url 'index' %}" class="hover:text-blue-500">Home</a></li>
-						<li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Destination</a></li>
-						<li><a href="{% url 'compare' %}" class="hover:text-blue-500">Compare</a></li>
-						<li><a href="{% url 'customize' %}" class="hover:text-blue-500">Customize</a></li>
-				
-						{% if user.is_authenticated %}
-							<li class="relative">
-								<a id="profilebtn" href="#" class="hover:text-blue-500"><i class="fas fa-user"></i>Profile</a>
-								<ul id="profileDropdown" class="absolute hidden bg-white shadow-md rounded mt-2">
-									<li><a href="{% url 'my_bookings' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Bookings</a></li>
-									<li><a href="{% url 'settings' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a></li>
-									<li><a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a></li>
-									
-								</ul>
-							</li>
-						{% else %}
-							<li><a href="{% url 'login' %}" class="hover:text-blue-500">Login</a></li>
-						{% endif %}
-					</ul>
-				</nav>
-				
-			</div>
-		</div>
-	</header>
+			
 
-	{% block content %}
+            <nav class="hidden md:block">
+				<ul class="flex justify-between items-center space-x-6 text-sm md:text-base">
+					<li><a href="{% url 'index' %}" class="hover:text-blue-500">Home</a></li>
+					<li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Destination</a></li>
+					<li><a href="{% url 'compare' %}" class="hover:text-blue-500">Compare</a></li>
+					<!-- <li><a href="{% url 'customize' %}" class="hover:text-blue-500">Customize</a></li> -->
+					{% if user.is_authenticated %}
+						<li class="relative">
+							<a id="profilebtn" class="hover:text-blue-500 cursor-pointer">Profile</a>
+							<ul id="profileDropdown" class="absolute hidden bg-white shadow-md rounded mt-2 py-4 px-2 right-0"> 
+								<li><a href="{% url 'my_bookings' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
+									<i class="fas fa-calendar-alt mr-2"></i> 
+									Bookings
+								</a></li>
+								<li><a href="{% url 'settings' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
+									<i class="fas fa-cog mr-2"></i> 
+									Settings
+								</a></li>
+								<li><a href="{% url 'logout' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
+									<i class="fas fa-sign-out-alt mr-2"></i> 
+									Logout
+								</a></li>
+							</ul>
+							
+							
+						</li>
+					{% else %}
+						<li><a href="{% url 'login' %}" class="hover:text-blue-500">Login</a></li>
+					{% endif %}
+				</ul>
+			</nav>
+			
+			
+			
 
-	{% endblock %}
+            <!-- Mobile Navigation Toggle -->
+            <div class="md:hidden">
+                <button id="menu-toggle" class="text-gray-800 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
 
-	<div class="py-10"></div>
-
-	<footer class="absolute bottom w-full bg-blue-500 text-white py-6">
-    <div class="container mx-auto px-24">
-        <p class="text-center">© 2024 Adven. All rights reserved.</p>
+        <!-- Mobile Navigation -->
+        <nav id="mobile-menu" class="md:hidden hidden">
+            <ul class="flex flex-col space-y-5 mt-3 text-sm md:text-base">
+                <li><a href="{% url 'index' %}" class="hover:text-blue-500">Home</a></li>
+                <li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Destination</a></li>
+                <li><a href="{% url 'compare' %}" class="hover:text-blue-500">Compare</a></li>
+                <!-- <li><a href="{% url 'customize' %}" class="hover:text-blue-500">Customize</a></li> -->
+                {% if user.is_authenticated %}
+                    <li class="relative">
+                        <a id="profilebtn-mobile" class="hover:text-blue-500"><i class="fas fa-user"></i> Profile</a>
+                        <ul id="profileDropdown-mobile" class="absolute hidden bg-white shadow-md rounded mt-2">
+                            <li><a href="{% url 'my_bookings' %}" class="block px-4 py-2 hover:bg-gray-200">Bookings</a></li>
+                            <li><a href="{% url 'settings' %}" class="block px-4 py-2 hover:bg-gray-200">Settings</a></li>
+                            <li><a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-gray-200">Logout</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="hover:text-blue-500">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
-	</footer>
+</header>
+
+<div class="container mx-auto py-6 sm:px-6 lg:px-8 flex-grow">
+    {% block content %}
+    <!-- Page-specific content goes here -->
+
+	
+    {% endblock %}
 </div>
+
+
+<footer class="bg-blue-500 text-white py-6 mt-auto">
+    <div class="container mx-auto text-center">
+        © 2024 Adven. All rights reserved.
+    </div>
+</footer>
+
 <script>
-    // Toggle dropdown menu
+    // Toggle the mobile menu
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // Toggle the profile dropdown (desktop)
     document.getElementById('profilebtn').addEventListener('click', function() {
-        var dropdown = document.getElementById('profileDropdown');
-        dropdown.classList.toggle('hidden');
+        document.getElementById('profileDropdown').classList.toggle('hidden');
+    });
+
+    // Toggle the profile dropdown (mobile)
+    document.getElementById('profilebtn-mobile').addEventListener('click', function() {
+        document.getElementById('profileDropdown-mobile').classList.toggle('hidden');
     });
 </script>
+
+
+
+
+
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-sha256.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/enc-base64.min.js"></script>
+
+<!-- Example of crypto-js usage -->
 <script>
-	var hash = CryptoJS.HmacSHA256("Message", "secret");
-	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
-	document.write(hashInBase64);
+    var hash = CryptoJS.HmacSHA256("Message", "secret");
+    var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+    console.log(hashInBase64);
 </script>
+<script>// Get current hour
+	var currentHour = new Date().getHours();
 
+	// Determine the time-based greeting
+	var timeGreeting = '';
+	if (currentHour >= 5 && currentHour < 12) {
+		timeGreeting = '<span style="font-size: smaller;">Good Morning</span>';
+	} else if (currentHour >= 12 && currentHour < 18) {
+		timeGreeting = '<span style="font-size: smaller;">Good Afternoon</span>';
+	} else {
+		timeGreeting = '<span style="font-size: smaller;">Good Evening</span>';
+	}
 
-<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-{% for flashmsg in messages %}
-	<script>
-		
-		alertify.set('notifier','position', 'top-right');
-		alertify.success('{{ flashmsg }}');
-		
-	</script>
-{% endfor %}
+	// Determine the user-based greeting
+	var userAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+	var username = "{{ user.username }}";
+	var capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1); // Capitalizing the first letter
+	var userGreeting = userAuthenticated ? '<strong>Welcome back,</strong> ' + capitalizedUsername : '<strong>Welcome</strong> ';
 
+	// Combine the time-based greeting and the user-based greeting with a line break
+	var fullGreeting = timeGreeting + '<br>' + userGreeting;
 
+	// Set the greeting in the HTML
+	document.getElementById('greeting').innerHTML = fullGreeting;
+  </script>
 
 </body>
-
 </html>

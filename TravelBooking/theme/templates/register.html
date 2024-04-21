@@ -36,6 +36,10 @@
                    class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
         </div>
         <div class="mb-4">
+            <input type="text" name="phone_number" placeholder="Phone Number"  minlength="10" maxlength="10"  required
+                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="mb-4">
             <input type="password" name="password1" placeholder="Password" minlength="8" maxlength="50" required
                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
                 title="Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long"
@@ -47,9 +51,10 @@
                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
                 title="Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long"
                 class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
-
-        <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
-        <p class="mt-4 text-sm text-center">Already have an account? <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-900">Login</a></p>
+        
+            <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md mt-4 hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
+            <p class="mt-4 text-sm text-center">Already have an account? <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-900">Login</a></p>
+        </div>
         
     </form>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>

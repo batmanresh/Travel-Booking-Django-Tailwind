@@ -18,14 +18,18 @@ urlpatterns = [
     path('my-bookings/', views.my_bookings, name='my_bookings'),
     path('search/', views.search_results, name='search_results'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
-
-
     path('compare/', views.compare_products, name='compare'),
+
+
+    
+
+    
     path('customize/', views.customize, name='customize'),
+    
     
 
 
-
+    path('add_product/', views.add_product, name='add_product'),
     path('vendor_login/', views.vendor_login, name='vendor_login'),
     path('vendor_register/', views.vendor_register, name='vendor_register'),
     path('vendor_dashboard/', views.vendor_dashboard, name='vendor_dashboard'),
