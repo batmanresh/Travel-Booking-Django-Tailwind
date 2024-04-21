@@ -20,7 +20,7 @@
             {% endfor %}
         </div>
         <div class="mb-4">
-            <input type="text" name="first_name" placeholder="First Name" 
+            <input type="text" name="first_name" placeholder="First Name" required
                    class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
         </div>
         <div class="mb-4">
@@ -36,13 +36,18 @@
                    class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
         </div>
         <div class="mb-4">
-            <input type="password" name="password1" placeholder="Password" minlength="5" maxlength="20" required 
-                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+            <input type="password" name="password1" placeholder="Password" minlength="8" maxlength="50" required
+                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
+                title="Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long"
+                class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+
         </div>
         <div class="mb-6">
-            <input type="password" name="password2" placeholder="Confirm Password" minlength="5" maxlength="20" required 
-                   class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
-        </div>
+            <input type="password" name="password2" placeholder="Confirm Password" minlength="8" maxlength="50" required
+                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
+                title="Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 8 characters long"
+                class="px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500">
+
         <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
         <p class="mt-4 text-sm text-center">Already have an account? <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-900">Login</a></p>
         
@@ -55,6 +60,7 @@
         alertify.success('{{ flashmsg }}');
     
     </script>
+    
 {% endfor %}
 
 </body>

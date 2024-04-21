@@ -19,6 +19,7 @@ urlpatterns = [
     path('delete_account/', views.delete_account, name='delete_account'),
     path('checkout/', views.checkout, name='checkout'),
     path('customize/', views.customize, name='customize'),
+    path('search/', views.search_results, name='search_results'),
     
 
 ]

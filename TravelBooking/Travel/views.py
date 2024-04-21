@@ -21,7 +21,10 @@ import decimal
 from django.views.decorators.csrf import csrf_exempt
 from .utils import send_email_to_client
 from django.core.files.storage import FileSystemStorage
-
+from .forms import EditProfileForm 
+from .decorators import allowed_users,vendor_only
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -61,8 +64,72 @@ def product_detail_view(request, pid):
 def settings(request):
 
     return render(request,"settings.html")
-    
 
+def search_results(request):
+    search_query = request.GET.get('q', '')
+
+    search_results = Product.objects.filter(title__icontains=search_query) | Product.objects.filter(description__icontains=search_query)
+
+    context = {
+        'search_query': search_query,
+        'search_results': search_results,
+    }
+
+    return render(request, 'search_results.html', context)
+
+
+from django.shortcuts import render
+from .models import Product
+
+def compare_products(request):
+    products = Product.objects.all()
+    selected_products = None
+    comparison_result=None
+
+    if request.method == 'POST':
+        selected_product1_id = request.POST.get('selected_product1')
+        selected_product2_id = request.POST.get('selected_product2')
+        
+        selected_product1 = Product.objects.get(id=selected_product1_id)
+        selected_product2 = Product.objects.get(id=selected_product2_id)
+        
+        # Perform comparison logic here
+        comparison_result = {}
+
+        # Example comparison logic (you can adjust this based on your requirements)
+        if selected_product1.price < selected_product2.price:
+            comparison_result['price'] = f"{selected_product1.title} is cheaper than {selected_product2.title}"
+        elif selected_product1.price > selected_product2.price:
+            comparison_result['price'] = f"{selected_product2.title} is cheaper than {selected_product1.title}"
+        else:
+            comparison_result['price'] = "Prices are the same"
+
+        selected_products = [selected_product1, selected_product2]
+
+    return render(request, 'compare.html', {'products': products, 'selected_products': selected_products, 'comparison_result': comparison_result})
+
+
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('settings')  # Redirect to the user's profile page
+        else:
+            messages.error(request, 'Error updating profile. Please correct the errors below.')
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    return render(request, 'edit_profile.html', {'form': form})
+
+
+
+
+@login_required(login_url="login")
 def my_bookings(request):
     if not request.user.is_authenticated:
         # Redirect to login page or show an error
@@ -75,7 +142,7 @@ def my_bookings(request):
 
     return render(request, 'my_bookings.html', {'bookings': bookings})
 
-
+@login_required(login_url="login")
 def check_availability(request, pid):
     product = get_object_or_404(Product, pid=pid)
     if request.method == 'POST':
@@ -208,7 +275,7 @@ def payment_response(request):
 
 ######################################### SUBMIT BOOKING ####################################################
 
-@login_required
+@login_required(login_url="login")
 def submit_booking(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -239,14 +306,14 @@ def submit_booking(request):
 
 ######################################### CHANGE PASSWORD ####################################################
 
-@login_required
+@login_required(login_url="login")
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # To keep the user logged in
-            messages.success(request, 'Your password was successfully updated!')
+            messages.success(request, 'Your password was successfully changed!')
             return redirect('settings')
         else:
             # Handling specific error cases
@@ -261,7 +328,7 @@ def change_password(request):
     return render(request, 'change_password.html', {'form': form})
 
 
-@login_required
+@login_required(login_url='login')
 def delete_account(request):
     if request.method == 'POST':
         user = request.user
@@ -274,17 +341,6 @@ def delete_account(request):
 def checkout(request):
     return render(request, 'checkout.html')
 
-
-
-
-
-
-
-
-
-
-
-
 def customize(request):
     return render(request,'customize.html')
 
@@ -292,52 +348,62 @@ def customize(request):
 
 ######################## SIGNUP ###############################
 
+from django.contrib import messages
+
 def register(request):
-    if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-
-        if password1 == password2:
-            if User.objects.filter(username=username).exists():
-                messages.success(request, 'Username Taken')
-                return redirect('register')
-            elif User.objects.filter(email=email).exists():
-                messages.success(request, 'Email already Taken')
-                return redirect('register')
-            else:
-                user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name,
-                                                first_name=first_name)
-                user.save()
-                return redirect('login')
-        else:
-            messages.success(request, 'Password does not match ')
-            return redirect('register')
-
+    if request.user.is_authenticated:
+        return redirect('index')
     else:
-        return render(request, 'register.html')
-    
+        if request.method == 'POST':
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            username = request.POST['username']
+            email = request.POST['email']
+            password1 = request.POST['password1']
+            password2 = request.POST['password2']
+
+            if password1 == password2:
+                if User.objects.filter(username=username).exists():
+                    messages.error(request, 'Username Taken')
+                    return redirect('register')
+                elif User.objects.filter(email=email).exists():
+                    messages.error(request, 'Email already Taken')
+                    return redirect('register')
+                else:
+                    user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name,
+                                                    first_name=first_name)
+                    user.save()
+                    messages.success(request, 'Account created successfully. You can now login.')
+                    return redirect('login')
+            else:
+                messages.error(request, 'Password does not match ')
+                return redirect('register')
+
+        else:
+            return render(request, 'register.html')
+
+        
 
 
 ######################## LOGIN ###############################
 
 def login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = auth.authenticate(username=username, password=password)
-        if user is not None:
-            auth.login(request, user)
-            messages.success(request, 'Sucessfully Logged in')
-            return  redirect('index')
-        else:
-            messages.error(request, 'Invalid credential')
-            return redirect('login')
+    if request.user.is_authenticated:
+        return redirect('index')
     else:
-        return render(request, 'login.html')
+        if request.method == 'POST':
+            username = request.POST['username']
+            password = request.POST['password']
+            user = auth.authenticate(username=username, password=password)
+            if user is not None:
+                auth.login(request, user)
+                messages.success(request, 'Sucessfully Logged in')
+                return  redirect('index')
+            else:
+                messages.error(request, 'Invalid credential')
+                return redirect('login')
+        else:
+            return render(request, 'login.html')
 
 
 def logout(request):
@@ -348,18 +414,21 @@ def logout(request):
 
 
 ################################################# VENDOR LOGIN ###################################################
-@login_required
+@allowed_users(allowed_roles=['vendor'])
+@vendor_only
+@login_required(login_url= "vendor_login")
 def vendor_dashboard(request):
     # Your vendor dashboard logic here
     return render(request, 'vendor_dashboard.html')
+
 
 def vendor_login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         user = auth.authenticate(username=username, password=password)
-        if user is not None and user.is_vendor:  # Assuming is_vendor is a boolean field in your User model
-            auth.login(request, user)
+        if user is not None and user.groups.filter(name='vendor').exists():
+            auth.login(request, user)  # Authentication handled by Django's middleware
             messages.success(request, 'Successfully logged in as vendor')
             return redirect('vendor_dashboard')
         else:
@@ -367,6 +436,9 @@ def vendor_login(request):
             return redirect('vendor_login')
     else:
         return render(request, 'vendor_login.html')
+
+    
+
     
 
 

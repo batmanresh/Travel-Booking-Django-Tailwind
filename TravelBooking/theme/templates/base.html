@@ -41,16 +41,18 @@
 				<nav class="main_nav">
 					<ul class="flex justify-center lg:justify-between items-center lg:space-x-6 lg:text-base md:space-x-6 text-sm">
 						<li><a href="{% url 'index' %}" class="hover:text-blue-500">Home</a></li>
-						<li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Adventure</a></li>
+						<li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Destination</a></li>
+						<li><a href="{% url 'compare' %}" class="hover:text-blue-500">Compare</a></li>
 						<li><a href="{% url 'customize' %}" class="hover:text-blue-500">Customize</a></li>
-						<li><a href="{% url 'my_bookings' %}" class="hover:text-blue-500">My Booking</a></li>
 				
 						{% if user.is_authenticated %}
 							<li class="relative">
 								<a id="profilebtn" href="#" class="hover:text-blue-500"><i class="fas fa-user"></i>Profile</a>
 								<ul id="profileDropdown" class="absolute hidden bg-white shadow-md rounded mt-2">
-									<li><a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a></li>
+									<li><a href="{% url 'my_bookings' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Bookings</a></li>
 									<li><a href="{% url 'settings' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a></li>
+									<li><a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a></li>
+									
 								</ul>
 							</li>
 						{% else %}

@@ -41,13 +41,18 @@
         </div>
     </div>
     
-    <button id="editProfileBtn" class="bg-blue-500 text-white px-4 py-2 rounded mt-6 hover:bg-blue-700">Edit Profile</button>
+    <div class="inline-block bg-blue-500 text-white px-4 py-2 rounded mt-6 hover:bg-blue-700">
+        <a href="{% url 'edit_profile' %}" class="block">Edit Profile</a>
+    </div>
+    
+    
+
 </div>
 
 </div>
 
 <!-- Modal for Edit Profile -->
-<div id="editProfileModal" class="fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50">
+<!-- <div id="editProfileModal" class="fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50">
     <div class="bg-white p-8 rounded max-w-md">
         <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
         <form id="editProfileForm">
@@ -64,9 +69,9 @@
         </form>
         <button id="closeModalBtn" class="bg-gray-500 text-white px-4 py-2 rounded mt-4 hover:bg-gray-700">Close</button>
     </div>
-</div>
+</div> -->
 
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         const editProfileBtn = document.getElementById('editProfileBtn');
         const editProfileModal = document.getElementById('editProfileModal');
@@ -98,8 +103,7 @@
                     console.log('Form submitted successfully');
                     // You can add your own success handling here
                 } else {
-                    // Handle form submission error
-                    // For example, display an error message to the user
+                    
                     console.error('Form submission failed');
                     // You can add your own error handling here
                 }
@@ -109,7 +113,7 @@
             });
         });
     });
-</script>
+</script> -->
 
 {% endblock %}
 

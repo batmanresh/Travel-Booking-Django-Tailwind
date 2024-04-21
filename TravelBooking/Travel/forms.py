@@ -17,3 +17,9 @@ class BookingForm(forms.ModelForm):
             'check_in_date': forms.DateInput(attrs={'type': 'date'}),
             'special_requests': forms.Textarea(attrs={'rows': 4}),
         }
+
+        
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']

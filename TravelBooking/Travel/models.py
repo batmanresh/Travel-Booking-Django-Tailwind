@@ -58,7 +58,7 @@ class Vendor(models.Model):
     experience = models.CharField(max_length=100, default="100")
     authentic_rating = models.CharField(max_length=100, default="100")
 
-    vendor=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
+    user=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
 
     class Meta:
         verbose_name_plural="Vendors"
@@ -121,7 +121,7 @@ class ProductImages(models.Model):
         verbose_name_plural="Product Images"
 
 
-####################### product review, wishlist ################################
+####################### product review ################################
 class ProductReview(models.Model):
     user=models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
     product=models.ForeignKey(Product, on_delete=models.SET_NULL,null=True)
@@ -141,11 +141,14 @@ class ProductReview(models.Model):
     
 
 
+from django.db import models
+
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     check_in_date = models.DateField()
     num_guests = models.IntegerField()
+    special_requests = models.TextField(default='')  # Add special_requests field
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     transaction_uuid = models.CharField(max_length=255, unique=True)
