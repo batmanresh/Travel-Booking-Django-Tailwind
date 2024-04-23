@@ -136,14 +136,14 @@ class Booking(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     check_in_date = models.DateField()
     num_guests = models.IntegerField()
-    special_requests = models.TextField(default='')  # Add special_requests field
+    special_requests = models.TextField(default='')  
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     transaction_uuid = models.CharField(max_length=255, unique=True)
     transaction_code = models.CharField(
-        max_length=255, null=True, blank=True)  # Optional, if needed
+        max_length=255, null=True, blank=True)  
     transaction_status = models.CharField(
-        max_length=50, null=True, blank=True)  # Optional, if needed
+        max_length=50, null=True, blank=True)  
 
     def __str__(self):
         return f"{self.user.username}'s Booking for {self.product.title}"

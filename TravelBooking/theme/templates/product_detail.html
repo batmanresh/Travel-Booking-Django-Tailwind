@@ -119,6 +119,7 @@
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           if (data.available) {
             Swal.fire(
               "Available!",

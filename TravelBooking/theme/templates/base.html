@@ -157,27 +157,31 @@
 <script>// Get current hour
 	var currentHour = new Date().getHours();
 
-	// Determine the time-based greeting
-	var timeGreeting = '';
-	if (currentHour >= 5 && currentHour < 12) {
-		timeGreeting = '<span style="font-size: smaller;">Good Morning</span>';
-	} else if (currentHour >= 12 && currentHour < 18) {
-		timeGreeting = '<span style="font-size: smaller;">Good Afternoon</span>';
-	} else {
-		timeGreeting = '<span style="font-size: smaller;">Good Evening</span>';
-	}
+// Determine the time-based greeting
+var timeGreeting = '';
+if (currentHour >= 5 && currentHour < 12) {
+    timeGreeting = '<span style="font-size: smaller;">Good Morning</span>';
+} else if (currentHour >= 12 && currentHour < 18) {
+    timeGreeting = '<span style="font-size: smaller;">Good Afternoon</span>';
+} else {
+    timeGreeting = '<span style="font-size: smaller;">Good Evening</span>';
+}
 
-	// Determine the user-based greeting
-	var userAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
-	var username = "{{ user.username }}";
-	var capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1); // Capitalizing the first letter
-	var userGreeting = userAuthenticated ? '<strong>Welcome back,</strong> ' + capitalizedUsername : '<strong>Welcome</strong> ';
+// Determine if the user is authenticated
+var userAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
 
-	// Combine the time-based greeting and the user-based greeting with a line break
-	var fullGreeting = timeGreeting + '<br>' + userGreeting;
+// Set the greeting if the user is authenticated
+if (userAuthenticated) {
+    var username = "{{ user.username }}";
+    var capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1); // Capitalizing the first letter
+    var userGreeting = '<strong>Welcome back,</strong> ' + capitalizedUsername;
 
-	// Set the greeting in the HTML
-	document.getElementById('greeting').innerHTML = fullGreeting;
+    // Combine the time-based greeting and the user-based greeting with a line break
+    var fullGreeting = timeGreeting + '<br>' + userGreeting;
+
+    // Set the greeting in the HTML
+    document.getElementById('greeting').innerHTML = fullGreeting;
+}
   </script>
 
 </body>

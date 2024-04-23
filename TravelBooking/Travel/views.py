@@ -163,6 +163,7 @@ def check_availability(request, pid):
 ######################################### BOOKING DETAILS ####################################################
 
 
+@login_required(login_url="login")
 def booking_details(request, product_id):
     package_id = request.session.get('package_id')
     request.session['product_id'] = product_id
@@ -359,6 +360,7 @@ def customize(request):
 
 ######################################################################## ADD PRODUCT ###############################################################################
 
+@vendor_only
 def add_product(request):
     if request.method == "POST":
         form = AddProductForm(request.POST, request.FILES)
@@ -395,7 +397,7 @@ def register(request):
             email = request.POST['email']
             password1 = request.POST['password1']
             password2 = request.POST['password2']
-            phone_number = request.POST['phone_number']  
+             
 
             if password1 == password2:
                 if User.objects.filter(username=username).exists():
@@ -407,7 +409,7 @@ def register(request):
                 else:
                     user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name,
                                                     first_name=first_name)
-                    user.profile.phone_number = phone_number  
+                      
                     user.save()
                     messages.success(request, 'Account created successfully. You can now login.')
                     return redirect('login')
