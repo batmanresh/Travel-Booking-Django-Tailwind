@@ -59,8 +59,10 @@ def product_detail_view(request, pid):
    
     product = get_object_or_404(Product, pid=pid)
     print(product.image.url)
+    product_images = ProductImages.objects.filter(product=product)
     context = {
-        "product": product
+        "product": product,
+        "product_images": product_images
     }
     return render(request, "product_detail.html", context)
 
@@ -81,8 +83,7 @@ def search_results(request):
     return render(request, 'search_results.html', context)
 
 
-from django.shortcuts import render
-from .models import Product
+
 
 def compare_products(request):
     products = Product.objects.all()

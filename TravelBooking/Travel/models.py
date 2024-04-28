@@ -76,8 +76,8 @@ class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
 
-    price = models.DecimalField(max_digits=8, decimal_places=2, default="1.00")
-    old_price = models.DecimalField(max_digits=8, decimal_places=2, default="5.00")
+    price = models.IntegerField(default=1)
+    old_price = models.IntegerField(default=2)
 
     specifications = models.TextField(null=True, blank=True)
     is_available = models.BooleanField(default=True)  
@@ -97,8 +97,12 @@ class Product(models.Model):
         return self.title
 
     def get_percentage(self):
-        new_price = (self.price/self.old_price)*100
-        return new_price
+        if self.old_price != 0:
+            discount_percentage = 100 - ((self.price / self.old_price) * 100)
+            return discount_percentage
+        else:
+            return 0
+
     
 class ProductImages(models.Model):
     images=models.ImageField(upload_to="product-images",default="product.jpg")
