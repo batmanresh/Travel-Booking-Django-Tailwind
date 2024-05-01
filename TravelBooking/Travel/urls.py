@@ -27,8 +27,8 @@ urlpatterns = [
     path('customize/', views.customize, name='customize'),
     
     
-
-
+    path('edit_product/<int:product_id>/', views.edit_product, name='edit_product'),
+    path('vendor_products/', views.vendor_products, name='vendor_products'),
     path('add_product/', views.add_product, name='add_product'),
     path('vendor_login/', views.vendor_login, name='vendor_login'),
     path('vendor_register/', views.vendor_register, name='vendor_register'),

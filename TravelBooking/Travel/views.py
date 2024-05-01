@@ -73,7 +73,9 @@ def settings(request):
 def search_results(request):
     search_query = request.GET.get('q', '')
 
-    search_results = Product.objects.filter(title__icontains=search_query) | Product.objects.filter(description__icontains=search_query)
+    search_results = Product.objects.filter(title__icontains=search_query) | \
+                 Product.objects.filter(category__title__icontains=search_query)
+
 
     context = {
         'search_query': search_query,
@@ -359,33 +361,11 @@ def customize(request):
 
 
 
-######################################################################## ADD PRODUCT ###############################################################################
-
-@vendor_only
-def add_product(request):
-    if request.method == "POST":
-        form = AddProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            new_form = form.save(commit=False)
-            new_form.user = request.user
-            new_form.save()
-            form.save_m2m()
-            messages.success(request, "Product added successfully.")
-            return redirect("vendor_dashboard")  
-    else:
-        form = AddProductForm()
-
-    context = {
-        "form": form,
-    }
-
-    return render(request, "vendor_add_product.html", context)
 
 
 
 ######################################################################## SIGNUP ###############################################################################
 
-from django.contrib import messages
 
 def register(request):
     if request.user.is_authenticated:
@@ -527,6 +507,62 @@ def vendor_register(request):
     else:
         return render(request, 'vendor_register.html')
 
+######################################################################## ADD PRODUCT ###############################################################################
 
+@vendor_only
+def add_product(request):
+    if request.method == "POST":
+        form = AddProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_form = form.save(commit=False)
+            new_form.user = request.user
+            new_form.save()
+            form.save_m2m()
+            messages.success(request, "Product added successfully.")
+            return redirect("vendor_dashboard")  
+    else:
+        form = AddProductForm()
 
+    context = {
+        "form": form,
+    }
 
+    return render(request, "vendor_add_product.html", context)
+
+########################################Vendor Products##########################################
+def vendor_products(request):
+    # Get the current user
+    current_user = request.user
+    
+    # Filter products based on the current user's ID
+    all_products = Product.objects.filter(user=current_user)
+    
+    context = {
+        "all_products": all_products,
+    }
+
+    return render(request, "vendor_products.html", context)
+
+####################################### EDIT PRODUCT ################################################
+
+@vendor_only
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)  # Assuming Product is your model
+    if request.method == "POST":
+        form = AddProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            edited_product = form.save(commit=False)
+            edited_product.user = request.user
+            edited_product.save()
+            form.save_m2m()
+            messages.success(request, "Product updated successfully.")
+            return redirect("vendor_products")
+    else:
+        form = AddProductForm(instance=product)
+
+    context = {
+        "form": form,
+        "product": product,
+    }
+
+    return render(request, "vendor_edit_product.html", context)

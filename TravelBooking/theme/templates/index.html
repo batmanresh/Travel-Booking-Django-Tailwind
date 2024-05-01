@@ -55,17 +55,11 @@
             <div class="relative bg-white rounded-lg shadow-md overflow-hidden">
                 <!-- Discount Badge -->
                 {% if product.get_percentage > 0 %}
-                    <div class="absolute top-0 right-0 bg-green-600 text-white py-1 px-2 rounded-t-lg shadow-md">
+                    <div class="absolute top-0 left-0  bg-blue-500 text-white py-2 px-2 rounded-t-lg shadow-md ">
                         <span class="text-xs font-semibold">-{{ product.get_percentage|default:"0"|floatformat:0 }}%</span>
                     </div>
                 {% endif %}
                 
-                <!-- Featured Badge -->
-                {% if product.featured %}
-                    <div class="absolute top-0 left-0 bg-blue-500 text-white py-1 px-2 rounded-tl-lg shadow-md">
-                        <span class="text-xs font-semibold">Popular</span>
-                    </div>
-                {% endif %}
     
                 <img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-48 w-full object-cover rounded-t-lg">
                 

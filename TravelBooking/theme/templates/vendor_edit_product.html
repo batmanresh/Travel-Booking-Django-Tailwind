@@ -1,4 +1,4 @@
-<!-- vendor_dashboard.html -->
+<!-- vendor_edit_product.html -->
 {% load static tailwind_tags %}
 {% tailwind_css %}
 {{ form.media }}
@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Dashboard</title>
+    <title>Edit Product</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
@@ -45,7 +45,7 @@
             </div>
         </nav>
         <div class="container mx-auto mt-10 ml-5">
-            <h1 class="text-3xl font-bold mb-6">Add Product</h1>
+            <h1 class="text-3xl font-bold mb-6">Edit Product</h1>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% if form.errors %}
@@ -91,14 +91,12 @@
                 <button type="submit" class="py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
             </form>
         </div>
-        
+    </div>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     {% for flashmsg in messages %}
     <script>
-    
         alertify.set('notifier','position', 'top-right');
         alertify.success('{{ flashmsg }}');
-    
     </script>
     {% endfor %}
 </body>
