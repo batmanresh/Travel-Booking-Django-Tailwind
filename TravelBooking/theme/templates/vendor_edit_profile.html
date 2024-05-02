@@ -4,12 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Dashboard</title>
+    <title>Edit Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-    <!-- Default theme -->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- Sidebar -->
@@ -38,42 +34,45 @@
             <a href="{% url 'logout' %}" class="block py-2 px-4 text-sm hover:bg-gray-600">Logout</a>
         </div>
     </div>
+
     <!-- Content -->
     <div class="ml-64">
-        <nav class="bg-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-2">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-semibold">Vendor Dashboard</h1>
-                </div>
-            </div>
-        </nav>
-        <div class="max-w-7xl mx-auto px-4 py-8">
-            {% for product in all_products %}
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6 flex">
-                <div class="w-1/4 p-4">
-                    <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-auto">
-                </div>
-                <div class="w-3/4 p-4">
-                    <h2 class="text-lg font-semibold mb-2">{{ product.title }}</h2>
-                    <p class="text-gray-600 mb-2">Price: ${{ product.price }}</p>
-                    <p class="text-gray-600 mb-2">Status: {{ product.product_status }}</p>
-                    <div class="flex justify-between">
-                        <a href="{% url 'edit_product' product_id=product.id %}" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</a>
-
-                        <a href="{% url 'delete_product' product_id=product.id %}" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</a>
-                        
+            <nav class="bg-white shadow-md">
+                <div class="max-w-7xl mx-auto px-4 py-2">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-semibold">Vendor Dashboard</h1>
                     </div>
                 </div>
+            </nav>
+        <div class="flex justify-center items-center h-screen">
+            <div class="bg-white p-8 rounded max-w-md">
+                <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+                <form method="post" action="{% url 'vendor_edit_profile' %}">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="id_first_name" class="block text-sm font-semibold">First Name</label>
+                        <input type="text" id="id_first_name" name="first_name" value="{{ user.first_name }}" class="w-full border rounded px-3 py-2">
+                    </div>
+                    <div class="mb-4">
+                        <label for="id_last_name" class="block text-sm font-semibold">Last Name</label>
+                        <input type="text" id="id_last_name" name="last_name" value="{{ user.last_name }}" class="w-full border rounded px-3 py-2">
+                    </div>
+                    <div class="mb-4">
+                        <label for="id_email" class="block text-sm font-semibold">Email</label>
+                        <input type="email" id="id_email" name="email" value="{{ user.email }}" class="w-full border rounded px-3 py-2">
+                    </div>
+                    <div class="mb-4">
+                        <label for="id_username" class="block text-sm font-semibold">Username</label>
+                        <input type="text" id="id_username" name="username" value="{{ user.username }}" class="w-full border rounded px-3 py-2" readonly>
+                        <p class="text-xs text-gray-500 mt-1">Username cannot be edited</p>
+                    </div>
+                    <div class="flex justify-between">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Save Changes</button>
+                        <a href="{% url 'vendor_settings' %}" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">Cancel</a>
+                    </div>
+                </form>
             </div>
-            {% endfor %}
         </div>
     </div>
-    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-    {% for flashmsg in messages %}
-    <script>
-        alertify.set('notifier','position', 'top-right');
-        alertify.success('{{ flashmsg }}');
-    </script>
-    {% endfor %}
 </body>
 </html>

@@ -1,17 +1,16 @@
-<!-- vendor_dashboard.html -->
 {% load static tailwind_tags %}
-{% tailwind_css %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Dashboard</title>
+    <title>Vendor Settings</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
     <!-- Default theme -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+    
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- Sidebar -->
@@ -25,20 +24,19 @@
             </a>
             <span class="text-gray-900" id="greeting"></span>
         </div>
-        
         <ul class="py-4">
             <li>
-                <a href="{% url 'vendor_products' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Products</a>
+                <a href="{% url 'vendor_products' %}" class="block py-2 px-4 text-sm hover:bg-gray-600">Products</a>
             </li>
             <li>
-                <a href="{% url 'add_product' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Add Product</a>
+                <a href="{% url 'add_product' %}" class="block py-2 px-4 text-sm hover:bg-gray-600">Add Product</a>
             </li>
             <li>
-                <a href="{% url 'vendor_settings' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Settings</a>
+                <a href="{% url 'vendor_settings' %}" class="block py-2 px-4 text-sm hover:bg-gray-600">Settings</a>
             </li>
         </ul>
         <div class="absolute bottom-0 p-4">
-            <a href="{% url 'logout' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Logout</a>
+            <a href="{% url 'logout' %}" class="block py-2 px-4 text-sm hover:bg-gray-600">Logout</a>
         </div>
     </div>
     <!-- Content -->
@@ -50,66 +48,48 @@
                 </div>
             </div>
         </nav>
-        <div class="max-w-7xl mx-auto px-4 py-8">
-            <!-- Your content here -->
-            <div class="max-w-7xl mx-auto px-4 py-8">
-                <div class="flex justify-between">
-                    <div class="w-1/2 bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold mb-4">Products Added</h2>
-                        <p class="text-gray-700 text-lg">{{ num_products }}</p>
+        <div class="flex-1 p-10">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Profile Information</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center border-b border-gray-200 py-2">
+                        <p class="text-gray-600 font-semibold">Name:</p>
+                        <p class="text-gray-800">{{ user.first_name }} {{ user.last_name }}</p>
                     </div>
-                    <div class="w-1/2 bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold mb-4">Bookings Received</h2>
-                        <p class="text-gray-700 text-lg">{{ num_bookings }}</p>
+                    <div class="flex justify-between items-center border-b border-gray-200 py-2">
+                        <p class="text-gray-600 font-semibold">Email:</p>
+                        <p class="text-gray-800">{{ user.email }}</p>
                     </div>
-                </div>
-                
-                <!-- Chart -->
-                <div class="mt-8">
-                    <canvas id="myChart"></canvas>
+                    <div class="flex justify-between items-center py-2">
+                        <p class="text-gray-600 font-semibold">Username:</p>
+                        <p class="text-gray-800">{{ user.username }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
+            
+            <div class="flex justify-between">
+                <div class="inline-block bg-blue-500 text-white px-4 py-2 rounded mt-6 hover:bg-blue-700">
+                    <a href="{% url 'vendor_edit_profile' %}" class="block">Edit Profile</a>
+                </div>
+            
+                <div class="inline-block bg-blue-500 text-white px-4 py-2 rounded mt-6 hover:bg-blue-700">
+                    <a href="{% url 'change_password' %}" class="block">Change Password</a>
+                </div>
+            
+                <div class="inline-block bg-red-500 text-white px-4 py-2 rounded mt-6 hover:bg-red-700">
+                    <a href="{% url 'delete_account' %}" class="block">Delete Account</a>
+                </div>
+            </div>
+            
+                
+            
     </div>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     {% for flashmsg in messages %}
     <script>
-    
         alertify.set('notifier','position', 'top-right');
         alertify.success('{{ flashmsg }}');
-    
     </script>
     {% endfor %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Chart data
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Products Added', 'Bookings Received'],
-            datasets: [{
-                label: 'Data',
-                data: [{{ num_products }}, {{ num_bookings }}],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
 </body>
 </html>

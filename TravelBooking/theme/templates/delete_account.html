@@ -15,7 +15,11 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded mr-4">Delete Account</button>
+            {% if is_vendor %}
+            <a href="{% url 'vendor_settings' %}" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Cancel</a>
+            {% else %}
             <a href="{% url 'settings' %}" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Cancel</a>
+            {% endif %}
         </form>
     </div>
 </div>

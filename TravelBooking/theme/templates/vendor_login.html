@@ -44,16 +44,18 @@
                     {% endfor %}
                 </div>
             </form>
-            <div class="flex justify-center mt-6">
-                <p class="text-sm text-gray-600 item">Not a vendor? <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Login as Customer</a></p>
+            <a href="{% url 'forgot_password' %}" class="text-sm text-indigo-600 hover:text-indigo-800 ">Forgot password?</a>
+            <div class="flex justify-center mt-4">
+                <p class="text-sm text-gray-600">Sign Up as a <a href="{% url 'vendor_register' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Vendor</a></p>
             </div>
             <div class="flex justify-center items-center mt-4">
                 <div class="border-t border-gray-300 w-full"></div>
                 <p class="text-sm text-gray-600 px-4">Or</p>
                 <div class="border-t border-gray-300 w-full"></div>
             </div>
-            <div class="flex justify-center mt-4">
-                <p class="text-sm text-gray-600">Sign Up as a <a href="{% url 'vendor_register' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Vendor</a></p>
+            
+            <div class="flex justify-center mt-6">
+                <p class="text-sm text-gray-600 item">Not a vendor? <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Login as Customer</a></p>
             </div>
             
         </div>

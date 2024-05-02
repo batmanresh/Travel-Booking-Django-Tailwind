@@ -27,7 +27,12 @@ from django.contrib.auth.decorators import login_required
 from .forms import AddProductForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
-
+from django.contrib.auth.models import Group
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
+from django.contrib.auth.forms import PasswordResetForm
+from django.views.generic.edit import FormView
+from django.contrib.sites.shortcuts import get_current_site
 
 
 
@@ -37,19 +42,44 @@ def base(request):
     return render(request, "base.html")
 
 def index(request):
-    products=Product.objects.filter(product_status="published",featured=True)
-
-    context={
-        "products":products
+    products = Product.objects.filter(product_status="published", featured=True)
+    categories = Category.objects.all()  # Fetch all categories
+    
+    context = {
+        "products": products,
+        "categories": categories,  # Include categories in the context
     }
 
     return render(request, "index.html", context)
 
-def product_list_view(request):
+
+def product_list_view(request, category_slug=None):
+    category = None
     products = Product.objects.filter(product_status="published")
 
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        products = products.filter(category=category)
+
+    categories = Category.objects.all()
+
     context = {
-        "products": products
+        "category": category,
+        "products": products,
+        "categories": categories
+    }
+
+    return render(request, "product_list.html", context)
+
+def filtered_product_list_view(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
+    products = Product.objects.filter(product_status="published", category=category)
+    categories = Category.objects.all()
+
+    context = {
+        "category": category,
+        "products": products,
+        "categories": categories
     }
 
     return render(request, "product_list.html", context)
@@ -114,23 +144,6 @@ def compare_products(request):
 
     return render(request, 'compare.html', {'products': products, 'selected_products': selected_products, 'comparison_result': comparison_result})
 
-
-
-
-@login_required
-def edit_profile(request):
-    if request.method == 'POST':
-        form = EditProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your profile has been updated successfully.')
-            return redirect('settings')  
-        else:
-            messages.error(request, 'Error updating profile. Please correct the errors below.')
-    else:
-        form = EditProfileForm(instance=request.user)
-    
-    return render(request, 'edit_profile.html', {'form': form})
 
 
 
@@ -312,15 +325,20 @@ def submit_booking(request):
 
 ######################################### CHANGE PASSWORD ####################################################
 
-@login_required(login_url="login")
+@login_required
 def change_password(request):
+    
+    is_vendor = request.user.groups.filter(name='vendor').exists()
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  
             messages.success(request, 'Your password was successfully changed!')
-            return redirect('settings')
+            if is_vendor:
+                return redirect('vendor_settings')
+            else:
+                return redirect('settings')
         else:
             # Handling specific error cases
             if 'old_password' in form.errors:
@@ -331,17 +349,43 @@ def change_password(request):
                 messages.error(request, 'Please verify the password below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'change_password.html', {'form': form})
+        
+    return render(request, 'change_password.html', {'form': form, 'is_vendor': is_vendor})
+
 
 
 @login_required(login_url='login')
 def delete_account(request):
+    is_vendor = request.user.groups.filter(name='vendor').exists()
     if request.method == 'POST':
         user = request.user
         user.delete()
         messages.success(request, 'Your account has been deleted successfully.')
-        return redirect('index')  
-    return render(request, 'delete_account.html')
+        if is_vendor:
+            return redirect('index')
+        else:
+            return redirect('index')  
+    return render(request, 'delete_account.html', {'is_vendor': is_vendor})
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            if email != request.user.email and User.objects.filter(email=email).exists():
+                messages.error(request, 'This email address is already associated with another account.')
+            else:
+                form.save()
+                messages.success(request, 'Your profile has been updated successfully.')
+                return redirect('settings')  
+        else:
+            messages.error(request, 'Error updating profile. Please correct the errors below.')
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    return render(request, 'edit_profile.html', {'form': form})
 
 
 def checkout(request):
@@ -445,8 +489,18 @@ def logout(request):
 @vendor_only
 @login_required(login_url= "vendor_login")
 def vendor_dashboard(request):
-    # Your vendor dashboard logic here
-    return render(request, 'vendor_dashboard.html')
+    # Fetch the number of products added by the vendor
+    num_products = Product.objects.filter(user=request.user).count()
+    
+    # Fetch the number of bookings received by the vendor
+    num_bookings = Booking.objects.filter(product__user=request.user).count()
+    
+    context = {
+        'num_products': num_products,
+        'num_bookings': num_bookings
+    }
+    
+    return render(request, 'vendor_dashboard.html', context)
 
 
 def vendor_login(request):
@@ -491,12 +545,13 @@ def vendor_register(request):
                 messages.error(request, 'Email already Taken')
                 return redirect('vendor_register')
             else:
-                
                 fs = FileSystemStorage()
                 filename = fs.save(pan_card.name, pan_card)
 
                 user = User.objects.create_user(username=username, password=password1, email=email, first_name=first_name)
-                
+                vendor_group = Group.objects.get(name='vendor')
+                user.groups.add(vendor_group)  # Add user to the vendor group
+
                 user.save()
                 messages.success(request, 'Registration successful. Please login.')
                 return redirect('vendor_login')
@@ -530,11 +585,10 @@ def add_product(request):
     return render(request, "vendor_add_product.html", context)
 
 ########################################Vendor Products##########################################
+@vendor_only
 def vendor_products(request):
-    # Get the current user
     current_user = request.user
     
-    # Filter products based on the current user's ID
     all_products = Product.objects.filter(user=current_user)
     
     context = {
@@ -566,3 +620,97 @@ def edit_product(request, product_id):
     }
 
     return render(request, "vendor_edit_product.html", context)
+
+
+####################################### DELETE PRODUCT ################################################
+@vendor_only
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, "Product deleted successfully.")
+        return redirect('vendor_products')
+    return render(request, 'vendor_delete_product.html', {'product': product})
+
+
+def vendor_settings(request):
+
+    return render(request,"vendor_settings.html")
+
+
+def vendor_edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            if email != request.user.email and User.objects.filter(email=email).exists():
+                messages.error(request, 'This email address is already associated with another account.')
+            else:
+                form.save()
+                messages.success(request, 'Your profile has been updated successfully.')
+                return redirect('vendor_settings')  
+        else:
+            messages.error(request, 'Error updating profile. Please correct the errors below.')
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    return render(request, 'vendor_edit_profile.html', {'form': form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################################### Forget Password #################################################################3
+
+
+class ForgotPasswordView(FormView):
+    template_name = 'forgot_password.html'
+    form_class = PasswordResetForm
+    success_url = reverse_lazy('password_reset_done')
+
+    def form_valid(self, form):
+        site = get_current_site(self.request)
+        domain = site.domain
+        protocol = 'http' if self.request.is_secure() else 'https'
+        
+        form.save(
+            request=self.request,
+            from_email='example@example.com',
+            email_template_name='password_reset_email.html',
+            subject_template_name='password_reset_subject.txt',
+            extra_email_context={
+                'domain': domain,
+                'protocol': protocol,
+            }
+        )
+        
+        return super().form_valid(form)
+
+
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    email_template_name = 'password_reset_email.html'
+    success_url = reverse_lazy('password_reset_done')
+    template_name = 'password_reset_form.html'
+
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'password_reset_done.html'
+
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    success_url = reverse_lazy('password_reset_complete')
+    template_name = 'password_reset_confirm.html'
+
+
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'password_reset_complete.html'

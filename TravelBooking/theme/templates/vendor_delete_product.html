@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+        <h1 class="text-3xl font-semibold text-center mb-6">Delete Product</h1>
+        <p class="text-center mb-6">Are you sure you want to delete "{{ product.title }}"?</p>
+        <form method="post" class="flex justify-center">
+            {% csrf_token %}
+            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md mr-4 hover:bg-red-600">Delete</button>
+            <a href="{% url 'vendor_products' %}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

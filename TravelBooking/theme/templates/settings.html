@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static tailwind_tags %}
 {% block title %}
-    <title>Settings</title>
+    Settings
 {% endblock %}
 {% tailwind_css %}  
     
@@ -50,71 +50,16 @@
 </div>
 
 </div>
-
-<!-- Modal for Edit Profile -->
-<!-- <div id="editProfileModal" class="fixed inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-50">
-    <div class="bg-white p-8 rounded max-w-md">
-        <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
-        <form id="editProfileForm">
-            <div class="mb-4">
-                <label for="firstName" class="block text-sm font-semibold">First Name</label>
-                <input type="text" id="firstName" name="firstName" class="w-full border rounded px-3 py-2">
-            </div>
-            <div class="mb-4">
-                <label for="lastName" class="block text-sm font-semibold">Last Name</label>
-                <input type="text" id="lastName" name="lastName" class="w-full border rounded px-3 py-2">
-            </div>
-
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Save Changes</button>
-        </form>
-        <button id="closeModalBtn" class="bg-gray-500 text-white px-4 py-2 rounded mt-4 hover:bg-gray-700">Close</button>
-    </div>
-</div> -->
-
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const editProfileBtn = document.getElementById('editProfileBtn');
-        const editProfileModal = document.getElementById('editProfileModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const editProfileForm = document.getElementById('editProfileForm');
-
-        // Show edit profile modal
-        editProfileBtn.addEventListener('click', () => {
-            editProfileModal.classList.remove('hidden');
-        });
-
-        // Close modal
-        closeModalBtn.addEventListener('click', () => {
-            editProfileModal.classList.add('hidden');
-        });
-
-        // Handle form submission
-        editProfileForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(editProfileForm);
-            fetch(editProfileForm.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Handle successful form submission
-                    // For example, display a success message or redirect to another page
-                    console.log('Form submitted successfully');
-                    // You can add your own success handling here
-                } else {
-                    
-                    console.error('Form submission failed');
-                    // You can add your own error handling here
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    });
-</script> -->
-
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+{% for flashmsg in messages %}
+<script>
+    
+        alertify.set('notifier','position', 'top-right');
+        alertify.success('{{ flashmsg }}');
+    
+</script>
+{% endfor %}
 {% endblock %}
+
 
 

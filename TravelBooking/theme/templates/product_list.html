@@ -22,16 +22,38 @@
                     <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
                         <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
                     </button>
-                    
                 </form>
             </div>
         </div>
     </div>
 </div>
-<div class="mt-6">
 
+<!-- Category Filter -->
+<div class="mt-6">
+    <div class="flex justify-center">
+        <h2 class="text-2xl font-semibold">Filter by Category:</h2>
+    </div>
+    <div class="flex justify-center mt-2">
+        <div class="relative">
+            <select onchange="window.location.href=this.value" class="block appearance-none w-full bg-white bg-opacity-75 border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded-full shadow-md text-gray-800 focus:outline-none focus:shadow-outline">
+                <option value="#" selected>Select Category</option>
+                {% for category in categories %}
+                    <option value="{% url 'filtered_product_list' category_id=category.id %}">{{ category.title }}</option>
+                {% endfor %}
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+
+
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
     {% for product in products %}
         <div class="relative bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Discount Badge -->
@@ -65,6 +87,4 @@
         </div>
     {% endfor %}
 </div>
-
-
 {% endblock %}
