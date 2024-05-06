@@ -154,8 +154,16 @@ def contact_us(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('contact_success')
+            # Process the form data (e.g., send an email)
+            # You can access the form fields using form.cleaned_data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+
+            # Handle the form data as needed (e.g., send an email)
+
+            # Redirect to a success page or display a success message
+            return redirect('contact_success')  # Replace 'success_page' with the URL name of your success page
     else:
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})

@@ -23,7 +23,7 @@ class BookingAdmin(admin.ModelAdmin):
                     'num_guests', 'total_price', 'transaction_uuid']
     
 class ContactMessageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'subject', 'timestamp')
+    list_display = ('name', 'email', 'timestamp')
 
 
 

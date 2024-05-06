@@ -47,7 +47,7 @@ class AddProductForm(forms.ModelForm):
         model = Product
         fields = ['title', 'price', 'old_price', 'description', 'category', 'is_available','image']
 
-class ContactForm(forms.ModelForm):
-    class Meta:
-        model = ContactMessage
-        fields = ['name', 'email', 'subject', 'message']
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
