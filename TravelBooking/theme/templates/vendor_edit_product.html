@@ -94,10 +94,13 @@
                     <label for="is_available" class="block text-gray-700 font-bold mb-2">Is Available</label>
                     {{ form.is_available }}
                 </div>
-                <button type="submit" class="py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Submit</button>
+                <!-- Multiple image upload fields -->
+                
+                <button type="submit" class="py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Update Product</button>
             </form>
         </div>
     </div>
+    <!-- Include scripts here -->
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     {% for flashmsg in messages %}
     <script>

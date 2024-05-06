@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Vendor, ProductReview, ProductImages,Booking
+from .models import Product, Category, Vendor, ProductReview, ProductImages,Booking,ContactMessage
 
 
 class ProductImagesAdmin(admin.TabularInline):
@@ -21,6 +21,11 @@ class ProductReviewAdmin(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     list_display = ['user', 'product', 'check_in_date',
                     'num_guests', 'total_price', 'transaction_uuid']
+    
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'timestamp')
+
+
 
 
 
@@ -30,4 +35,5 @@ admin.site.register(Category,CategoryAdmin)
 admin.site.register(Vendor,VendorAdmin)
 admin.site.register(ProductReview,ProductReviewAdmin)
 admin.site.register(Booking, BookingAdmin)
+admin.site.register(ContactMessage)
 

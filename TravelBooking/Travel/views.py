@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Category, Vendor, ProductReview, ProductImages, Booking
+from .models import Product, Category, Vendor, ProductReview, ProductImages, Booking, ContactMessage
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User, auth
@@ -21,10 +21,9 @@ import decimal
 from django.views.decorators.csrf import csrf_exempt
 from .utils import send_email_to_client
 from django.core.files.storage import FileSystemStorage
-from .forms import EditProfileForm 
+from .forms import EditProfileForm,AddProductForm,ContactForm
 from .decorators import allowed_users,vendor_only
 from django.contrib.auth.decorators import login_required
-from .forms import AddProductForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.models import Group
@@ -33,6 +32,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.forms import PasswordResetForm
 from django.views.generic.edit import FormView
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q
+
 
 
 
@@ -42,7 +43,7 @@ def base(request):
     return render(request, "base.html")
 
 def index(request):
-    products = Product.objects.filter(product_status="published", featured=True)
+    products = Product.objects.filter(product_status="published", featured=True, status=True)
     categories = Category.objects.all()  # Fetch all categories
     
     context = {
@@ -55,7 +56,7 @@ def index(request):
 
 def product_list_view(request, category_slug=None):
     category = None
-    products = Product.objects.filter(product_status="published")
+    products = Product.objects.filter(product_status="published",status=True)
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
@@ -73,7 +74,7 @@ def product_list_view(request, category_slug=None):
 
 def filtered_product_list_view(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    products = Product.objects.filter(product_status="published", category=category)
+    products = Product.objects.filter(product_status="published", category=category,status=True)
     categories = Category.objects.all()
 
     context = {
@@ -103,8 +104,11 @@ def settings(request):
 def search_results(request):
     search_query = request.GET.get('q', '')
 
-    search_results = Product.objects.filter(title__icontains=search_query) | \
-                 Product.objects.filter(category__title__icontains=search_query)
+    search_results = Product.objects.filter(
+        Q(title__icontains=search_query) | Q(category__title__icontains=search_query),
+        product_status="published",
+        status=True
+    )
 
 
     context = {
@@ -118,7 +122,7 @@ def search_results(request):
 
 
 def compare_products(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(product_status="published",status=True)
     selected_products = None
     comparison_result=None
 
@@ -145,6 +149,19 @@ def compare_products(request):
     return render(request, 'compare.html', {'products': products, 'selected_products': selected_products, 'comparison_result': comparison_result})
 
 
+
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('contact_success')
+    else:
+        form = ContactForm()
+    return render(request, 'contact.html', {'form': form})
+
+def contact_success(request):
+    return render(request, 'contact_success.html')
 
 
 
@@ -563,26 +580,38 @@ def vendor_register(request):
         return render(request, 'vendor_register.html')
 
 ######################################################################## ADD PRODUCT ###############################################################################
+from .forms import AddProductForm, AddProductFormSet,ProductImageForm
+from django.forms import inlineformset_factory
+@vendor_only
+
 
 @vendor_only
 def add_product(request):
+    ImageFormSet = inlineformset_factory(Product, ProductImages, form=ProductImageForm, extra=3)
+
     if request.method == "POST":
         form = AddProductForm(request.POST, request.FILES)
-        if form.is_valid():
+        formset = ImageFormSet(request.POST, request.FILES)
+        if form.is_valid() and formset.is_valid():
             new_form = form.save(commit=False)
             new_form.user = request.user
             new_form.save()
             form.save_m2m()
+            formset.instance = new_form  # Link formset to the new product instance
+            formset.save()
             messages.success(request, "Product added successfully.")
             return redirect("vendor_dashboard")  
     else:
         form = AddProductForm()
+        formset = ImageFormSet()
 
     context = {
         "form": form,
+        "formset": formset,  # Pass formset to template context
     }
 
     return render(request, "vendor_add_product.html", context)
+
 
 ########################################Vendor Products##########################################
 @vendor_only
@@ -601,7 +630,7 @@ def vendor_products(request):
 
 @vendor_only
 def edit_product(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)  # Assuming Product is your model
+    product = get_object_or_404(Product, pk=product_id)
     if request.method == "POST":
         form = AddProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():

@@ -1,115 +1,157 @@
 {% extends 'base.html' %}
 {% load static tailwind_tags %}
+
 {% block title %}
     Home
 {% endblock %}
+
 {% tailwind_css %}  
 
-
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
-
-
-    
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
 
 {% block content %}
 
 <!-- Search Bar Section -->
-    
-    <div class="bg-cover bg-center bg-blue-500 text-white py-24" style="background-image: url('/static/images/bg1.jpeg');background-position: top;">
-        <div class="container mx-auto px-6 text-center">
-            <h1 class="text-6xl font-bold">Welcome to Adven</h1>
-            <p class="mt-4 text-2xl">Experience Nepal with us!</p>
-            <div class="container mx-auto mt-16 flex justify-center">
-                <div class="relative">
-                    <form id="searchForm" class="flex" method="GET" action="{% url 'search_results' %}">
-                        <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white   bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
-                        <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
-                            <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
-                        </button>
-                        
-                    </form>
-                </div>
+<div class="bg-cover bg-center bg-blue-500 text-white py-24" style="background-image: url('/static/images/bg1.jpeg');background-position: top;">
+    <div class="container mx-auto px-6 text-center">
+        <h1 class="text-6xl font-bold">Welcome to Adven</h1>
+        <p class="mt-4 text-2xl ">Experience Nepal with us!</p>
+        <div class="container mx-auto mt-16 flex justify-center">
+            <div class="relative">
+                <form id="searchForm" class="flex" method="GET" action="{% url 'search_results' %}">
+                    <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
+                    <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
+                        <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+                    </button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Destinations Section -->
-    <div class="py-6 "></div>
-    <div class="destinations" id="destinations">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="col-span-1 md:col-span-3 text-center">
-                    <div class="section_subtitle text-gray-600 mb-2 text-xl">Simply amazing places</div>
-                    <div class="section_title text-4xl font-semibold py-4">Popular Destinations</div>
-                </div>
+<!-- Destinations Section -->
+<div class="py-6"></div>
+<div class="destinations" id="destinations">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="col-span-1 md:col-span-3 text-center">
+                <div class="section_subtitle text-gray-600 mb-2 text-xl">Simply amazing places</div>
+                <div class="section_title text-4xl font-semibold py-4">Popular Destinations</div>
             </div>
         </div>
     </div>
-    <div class="container mx-auto px-4 mt-12">
-        <div class="text-center">
-            <h2 class="text-3xl font-semibold mb-8">Discover by Category</h2>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {% for category in categories %}
-            <div class="bg-white shadow-md rounded-lg overflow-hidden transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                <img src="{{ category.image.url }}" alt="{{ category.title }}" class="h-48 w-full object-cover rounded-t-lg">
-                <div class="p-6">
-                    <h2 class="text-xl font-semibold mb-2">{{ category.title }}</h2>
-                    <p class="text-gray-700 mb-4">{{ category.description }}</p>
-                    <a href="{% url 'filtered_product_list' category_id=category.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Explore</a>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+    {% for product in products %}
+        <div class="relative bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Discount Badge -->
+            {% if product.get_percentage > 0 %}
+                <div class="absolute top-0 left-0 bg-blue-500 text-white py-2 px-2 rounded-t-lg shadow-md">
+                    <span class="text-xs font-semibold">-{{ product.get_percentage|default:"0"|floatformat:0 }}%</span>
                 </div>
+            {% endif %}
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-48 w-full object-cover rounded-t-lg">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-2">{{ product.title }}</h2>
+                <p class="text-gray-700 mb-2"><strong>Category:</strong> {{ product.category.title }}</p>
+                <p class="text-gray-700 mb-2"><strong>Vendor:</strong> {{ product.user }}</p>
+                <div class="flex items-center mb-2">
+                    <p class="text-gray-700 mr-2"><strong>Price:</strong></p>
+                    <p class="text-gray-900 text-lg font-semibold">Rs.{{ product.price }}</p>
+                    {% if product.get_percentage > 0 %}
+                        <p class="text-sm ml-2 text-gray-500 line-through">Rs.{{ product.old_price }}</p>
+                    {% endif %}
+                </div>
+                <a href="{% url 'product_detail' product.pid %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Read More</a>
             </div>
-            {% endfor %}
         </div>
+    {% endfor %}
+</div>
+
+<hr class="my-12 border-t-2 border-gray-300 mb-8">
+
+<div class="container mx-auto px-4 ">
+    <div class="text-center">
+        <h2 class="text-3xl font-semibold mb-8">Discover by Category</h2>
     </div>
-    
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {% for product in products %}
-            <div class="relative bg-white rounded-lg shadow-md overflow-hidden">
-                <!-- Discount Badge -->
-                {% if product.get_percentage > 0 %}
-                    <div class="absolute top-0 left-0  bg-blue-500 text-white py-2 px-2 rounded-t-lg shadow-md ">
-                        <span class="text-xs font-semibold">-{{ product.get_percentage|default:"0"|floatformat:0 }}%</span>
-                    </div>
-                {% endif %}
-                
-    
-                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="h-48 w-full object-cover rounded-t-lg">
-                
-                <div class="p-6">
-                    <h2 class="text-xl font-semibold mb-2">{{ product.title }}</h2>
-                    <p class="text-gray-700 mb-2"><strong>Category:</strong> {{ product.category.title }}</p>
-                    <p class="text-gray-700 mb-2"><strong>Vendor:</strong> {{ product.user }}</p>
-                    
-                    <div class="flex items-center mb-2">
-                        <p class="text-gray-700 mr-2"><strong>Price:</strong></p>
-                        <p class="text-gray-900 text-lg font-semibold">Rs.{{ product.price }}</p>
-                        
-                        {% if product.get_percentage > 0 %}
-                            <p class="text-sm ml-2 text-gray-500 line-through">Rs.{{ product.old_price }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <a href="{% url 'product_detail' product.pid %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Read More</a>
+        {% for category in categories %}
+        <a href="{% url 'filtered_product_list' category_id=category.id %}" class="block w-full h-full">
+            <div class="relative bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition duration-300 transform hover:-translate-y-1 hover:scale-105">
+                <img src="{{ category.image.url }}" alt="{{ category.title }}" class="h-56 w-full object-cover rounded-t-lg">
+                <div class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center text-center text-white bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition duration-300">
+                    <h2 class="text-xl font-semibold">{{ category.title }}</h2>
                 </div>
             </div>
+        </a>
         {% endfor %}
     </div>
-    
+</div>
 
-    
+<hr class="my-12 border-t-2 border-gray-300 mb-8">
 
-    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-    {% for flashmsg in messages %}
-    <script>
-        alertify.set('notifier', 'position', 'top-right');
-        alertify.success('{{ flashmsg }}');
-    </script>
-	{% endfor %}
+<div class="container mx-auto px-4">
+    <div class="text-center">
+        <h2 class="text-3xl font-semibold mb-8">Confused Between Destinations?</h2>
+    </div>
+    <div class="grid grid-cols-1">
+        <a href="{% url 'compare' %}" class="block w-full h-full">
+            <div class="relative bg-white shadow-md rounded-lg overflow-hidden hover:shadow-xl transition duration-300 transform hover:-translate-y-1 hover:scale-105">
+                <img src="media\pexels-dreamypixel-580151.jpg" alt="Compare Destination" class="h-56 w-full object-cover rounded-lg">
+                <div class="absolute inset-0 flex items-center justify-center text-center text-white bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition duration-300">
+                    <h2 class="text-2xl font-semibold">Compare Destinations</h2>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
 
-                    
+<hr class="my-12 border-t-2 border-gray-300">
+
+<div class="container mx-auto px-6 mt-12">
+    <div class="bg-white shadow-lg rounded-lg p-6" style="background-image: url('/static/images/bg1.jpeg'); background-size: cover; background-position: center;">
+        <h2 class="text-3xl font-semibold mb-4 text-center text-white">Contact Us</h2>
+        <form action="{% url 'contact_us' %}" method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-white font-semibold mb-1">Name</label>
+                    <input type="text" id="name" name="name" class="bg-gray-100 focus:outline-none focus:bg-white border-b-2 border-gray-400 py-2 px-4 w-full rounded-md" placeholder="Enter your name">
+                </div>
+                <div>
+                    <label for="email" class="block text-white font-semibold mb-1">Email</label>
+                    <input type="email" id="email" name="email" class="bg-gray-100 focus:outline-none focus:bg-white border-b-2 border-gray-400 py-2 px-4 w-full rounded-md" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label for="subject" class="block text-white font-semibold mb-1">Subject</label>
+                    <input type="text" id="subject" name="subject" class="bg-gray-100 focus:outline-none focus:bg-white border-b-2 border-gray-400 py-2 px-4 w-full rounded-md" placeholder="Enter your subject">
+                </div>
+                <div class="col-span-2">
+                    <label for="message" class="block text-white font-semibold mb-1">Message</label>
+                    <textarea id="message" name="message" class="bg-gray-100 focus:outline-none focus:bg-white border-b-2 border-gray-400 py-2 px-4 w-full rounded-md" rows="4" placeholder="Enter your message"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-center sm:justify-start">
+                <button type="submit" class="bg-blue-500 text-white py-2 px-6 rounded-full hover:bg-blue-600 focus:outline-none">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+{% for flashmsg in messages %}
+<script>
+    alertify.set('notifier', 'position', 'top-right');
+    alertify.success('{{ flashmsg }}');
+</script>
+{% endfor %}
+
 {% endblock %}

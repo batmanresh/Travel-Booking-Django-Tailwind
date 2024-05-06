@@ -36,14 +36,15 @@ def user_directory_path(instance, filename):
     return 'user_{0}/{1}'.format(instance.user.id,filename)
 
 class Category(models.Model):
-    cid=ShortUUIDField(unique=True, length=10, max_length=20,prefix="cat",alphabet="abcdefgh12345",default="NO Category")
-    title=models.CharField(max_length=100)
-    
+    cid = ShortUUIDField(unique=True, length=10, max_length=20, prefix="cat", alphabet="abcdefgh12345", default="NO Category")
+    title = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='category_images/', null=True, blank=True) 
+
     class Meta:
-        verbose_name_plural="Categories"
+        verbose_name_plural = "Categories"
 
     def __str__(self):
-        return self.title 
+        return self.title
     
 
 
@@ -111,6 +112,16 @@ class ProductImages(models.Model):
 
     class Meta:
         verbose_name_plural="Product Images"
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject
 
 
 ####################### product review ################################

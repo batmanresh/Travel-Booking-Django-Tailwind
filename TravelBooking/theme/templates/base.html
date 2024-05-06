@@ -41,24 +41,44 @@
 
             <nav class="hidden md:block">
 				<ul class="flex justify-between items-center space-x-6 text-sm md:text-base">
-					<li><a href="{% url 'index' %}" class="hover:text-blue-500">Home</a></li>
-					<li><a href="{% url 'product_list' %}" class="hover:text-blue-500">Destination</a></li>
-					<li><a href="{% url 'compare' %}" class="hover:text-blue-500">Compare</a></li>
-					<!-- <li><a href="{% url 'customize' %}" class="hover:text-blue-500">Customize</a></li> -->
+					<li>
+                        <a href="{% url 'index' %}" class="hover:text-blue-500 flex items-center">
+                            <i class="fas fa-home mr-1 text-blue-500"></i> 
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'product_list' %}" class="hover:text-blue-500 flex items-center">
+                            <i class="fas fa-globe mr-1 text-blue-500"></i> 
+                            Destination
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'compare' %}" class="hover:text-blue-500 flex items-center">
+                            <i class="fas fa-balance-scale mr-1 text-blue-500"></i> 
+                            Compare
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contact_us' %}" class="hover:text-blue-500 flex items-center">
+                            <i class="fas fa-envelope mr-1 text-blue-500"></i> 
+                            Contact Us
+                        </a>
+                    </li>
 					{% if user.is_authenticated %}
 						<li class="relative">
-							<a id="profilebtn" class="hover:text-blue-500 cursor-pointer">Profile</a>
+							<a id="profilebtn" class="hover:text-blue-500 cursor-pointer"><i class="fas fa-user text-blue-500 mr-1"></i> Profile</a>
 							<ul id="profileDropdown" class="absolute hidden bg-white shadow-md rounded mt-2 py-4 px-2 right-0"> 
 								<li><a href="{% url 'my_bookings' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
-									<i class="fas fa-calendar-alt mr-2"></i> 
+									<i class="fas fa-calendar-alt text-blue-500 mr-2"></i> 
 									Bookings
 								</a></li>
 								<li><a href="{% url 'settings' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
-									<i class="fas fa-cog mr-2"></i> 
+									<i class="fas fa-cog text-blue-500 mr-2"></i> 
 									Settings
 								</a></li>
 								<li><a href="{% url 'logout' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
-									<i class="fas fa-sign-out-alt mr-2"></i> 
+									<i class="fas fa-sign-out-alt text-blue-500 mr-2"></i> 
 									Logout
 								</a></li>
 							</ul>
@@ -66,7 +86,7 @@
 							
 						</li>
 					{% else %}
-						<li><a href="{% url 'login' %}" class="hover:text-blue-500">Login</a></li>
+						<li><a href="{% url 'login' %}" class="hover:text-blue-500"> Login</a></li>
 					{% endif %}
 				</ul>
 			</nav>

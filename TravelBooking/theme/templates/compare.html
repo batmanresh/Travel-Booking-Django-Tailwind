@@ -3,6 +3,23 @@
 {% block title %}compare{% endblock %}
 
 {% block content %}
+<!-- Search Bar Section -->
+<div class="bg-cover bg-center bg-blue-500 text-white py-24" style="background-image: url('/static/images/bg1.jpeg');background-position: top;">
+  <div class="container mx-auto px-6 text-center">
+      <h1 class="text-6xl font-bold">Compare Destinations</h1>
+      <p class="mt-4 text-2xl ">Confused Between Places?</p>
+      <div class="container mx-auto mt-16 flex justify-center">
+          <div class="relative">
+              <form id="searchForm" class="flex" method="GET" action="{% url 'search_results' %}">
+                  <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
+                  <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
+                      <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+                  </button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
   {% if selected_products %}
     <!-- Display selected products and comparison results side by side -->
     <div class="flex flex-wrap justify-between">
