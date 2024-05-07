@@ -42,10 +42,11 @@ class AddProductForm(forms.ModelForm):
     old_price = forms.DecimalField(widget=forms.NumberInput(attrs={"placeholder": "Enter old price", "class": "form-control"}))
     is_available = forms.BooleanField(widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),required=False)
     image = forms.ImageField(widget=forms.FileInput(attrs={"class": "form-control-file"}))
+    sku=forms.DecimalField(widget=forms.NumberInput(attrs={"placeholder": "Enter total people you can provide the service to", "class": "form-control"}))
 
     class Meta:
         model = Product
-        fields = ['title', 'price', 'old_price', 'description', 'category', 'is_available','image']
+        fields = ['title', 'price', 'old_price', 'description', 'category','sku', 'is_available','image']
 
 class ContactForm(forms.Form):
     name = forms.CharField(max_length=100)

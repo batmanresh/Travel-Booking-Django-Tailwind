@@ -81,11 +81,13 @@ class Product(models.Model):
     old_price = models.IntegerField(default=2)
 
     specifications = models.TextField(null=True, blank=True)
-    is_available = models.BooleanField(default=True)  
+    is_available = models.BooleanField(default=True)
+     
     product_status = models.CharField(
         choices=STATUS, max_length=10, default="in_review")
     status = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
+    sku = models.IntegerField(default=0)
 
 
     class Meta:
@@ -103,6 +105,16 @@ class Product(models.Model):
             return discount_percentage
         else:
             return 0
+    def decrease_sku(self, num_guests):
+        """
+        Decreases the SKU by the specified number of guests.
+        """
+        if self.sku >= num_guests:
+            self.sku -= num_guests
+            self.save()
+            return True
+        else:
+            return False
 
     
 class ProductImages(models.Model):

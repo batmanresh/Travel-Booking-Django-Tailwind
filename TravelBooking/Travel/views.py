@@ -189,9 +189,9 @@ def my_bookings(request):
 def check_availability(request, pid):
     product = get_object_or_404(Product, pid=pid)
     if request.method == 'POST':
-        if product.is_available:
+        num_guests = int(request.POST.get('num_guests', 0))
+        if product.is_available and product.sku >= num_guests:
             start_date = request.POST.get('startDate')
-            num_guests = request.POST.get('num_guests')
             request.session['start_date'] = start_date
             request.session['num_guests'] = num_guests
             request.session['package_id'] = pid
@@ -199,6 +199,7 @@ def check_availability(request, pid):
             return JsonResponse({'available': True, 'redirect_url': details_url})
         else:
             return JsonResponse({'available': False})
+
         
 
 ######################################### BOOKING DETAILS ####################################################
@@ -318,33 +319,37 @@ def payment_response(request):
 
 
 ######################################### SUBMIT BOOKING ####################################################
-
+from django.http import HttpResponseBadRequest
 @login_required(login_url="login")
 def submit_booking(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         check_in_date = request.POST.get('check_in_date')
-        num_guests = int(request.POST.get('num_guests')
-                         )  
+        num_guests = int(request.POST.get('num_guests'))
 
         product = Product.objects.get(pk=product_id)
-        total_price = calculate_price(product, num_guests)
 
-        booking = Booking.objects.create(
-            user=request.user,
-            product=product,
-            check_in_date=check_in_date,
-            num_guests=num_guests,
-            total_price=total_price,
-            special_requests=request.POST.get('special_requests', ''),
-        )
+        # Attempt to decrease the SKU
+        if product.decrease_sku(num_guests):
+            total_price = calculate_price(product, num_guests)
 
-        
-        return redirect('booking_confirmation', booking_id=booking.id)
+            booking = Booking.objects.create(
+                user=request.user,
+                product=product,
+                check_in_date=check_in_date,
+                num_guests=num_guests,
+                total_price=total_price,
+                special_requests=request.POST.get('special_requests', ''),
+            )
+
+            return redirect('booking_confirmation', booking_id=booking.id)
+        else:
+            # Handle the case where there are not enough available SKUs
+            return HttpResponseBadRequest("Not enough available SKUs")
 
     else:
-        
         return render(request, 'booking_form.html')
+
     
 
 
