@@ -440,19 +440,36 @@ def customize(request):
 
 ######################################################################## SIGNUP ###############################################################################
 
+import random
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from .models import OTP
 
+# Function to generate OTP
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+# Function to send OTP via email
+def send_otp_email(user, otp):
+    subject = 'Email Verification OTP'
+    message = f'Your OTP for email verification is: {otp}'
+    email_from = 'np03cs3s220121@heraldcollege.edu.np'
+    recipient_list = [user.email]
+    send_mail(subject, message, email_from, recipient_list)
+
+# Registration view with email verification
 def register(request):
     if request.user.is_authenticated:
         return redirect('index')
     else:
         if request.method == 'POST':
+            # Extract form data
             first_name = request.POST['first_name']
             last_name = request.POST['last_name']
             username = request.POST['username']
             email = request.POST['email']
             password1 = request.POST['password1']
             password2 = request.POST['password2']
-             
 
             if password1 == password2:
                 if User.objects.filter(username=username).exists():
@@ -462,18 +479,56 @@ def register(request):
                     messages.error(request, 'Email already Taken')
                     return redirect('register')
                 else:
-                    user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name,
-                                                    first_name=first_name)
-                      
-                    user.save()
-                    messages.success(request, 'Account created successfully. You can now login.')
-                    return redirect('login')
+                    # Generate OTP
+                    otp = generate_otp()
+                    # Create user
+                    user = User.objects.create_user(username=username, password=password1, email=email, last_name=last_name, first_name=first_name)
+                    # Create OTP instance and associate with user
+                    otp_instance = OTP.objects.create(user=user, otp_code=otp)
+                    # Send OTP via email
+                    send_otp_email(user, otp)
+                    messages.success(request, 'Account created successfully.')
+                    request.session['username'] = username  # Store username in session for verification
+                    return redirect('verify_email')  # Redirect to the OTP verification page
             else:
                 messages.error(request, 'Password does not match ')
                 return redirect('register')
 
         else:
             return render(request, 'register.html')
+
+# Verification view
+def verify_email(request):
+    if request.method == 'POST':
+        otp_entered = request.POST.get('otp')
+        if 'username' in request.session:
+            username = request.session['username']
+            try:
+                user = User.objects.get(username=username)
+                otp_instance = OTP.objects.get(user=user)
+                if otp_instance.otp_code == otp_entered:
+                    # Mark email as verified
+                    user.email_verified = True
+                    user.save()
+                    # Set session variable to indicate email verification
+                    request.session['email_verified'] = True
+                    messages.success(request, 'Email verified successfully.')
+                    del request.session['username']  # Remove username from session
+                    return redirect('login')
+                else:
+                    messages.error(request, 'Invalid OTP. Please try again.')
+                    return redirect('verify_email')
+            except User.DoesNotExist:
+                messages.error(request, 'User not found.')
+                return redirect('register')  # Redirect to registration page if user not found
+            except OTP.DoesNotExist:
+                messages.error(request, 'OTP not found.')
+                return redirect('register')  # Redirect to registration page if OTP not found
+        else:
+            messages.error(request, 'Username session not found.')
+            return redirect('register')  # Redirect to registration page if username session not found
+    else:
+        return render(request, 'verify_email.html')
 
 
         
@@ -582,9 +637,16 @@ def vendor_register(request):
                 vendor_group = Group.objects.get(name='vendor')
                 user.groups.add(vendor_group)  # Add user to the vendor group
 
-                user.save()
-                messages.success(request, 'Registration successful. Please login.')
-                return redirect('vendor_login')
+                # Generate OTP
+                otp = generate_otp()
+                # Create OTP instance and associate with user
+                otp_instance = OTP.objects.create(user=user, otp_code=otp)
+                # Send OTP via email
+                send_otp_email(user, otp)
+
+                messages.success(request, 'Registration successful. Please verify your email to complete the registration process.')
+                request.session['username'] = username  # Store username in session for verification
+                return redirect('verify_email')  # Redirect to the OTP verification page
         else:
             messages.error(request, 'Password does not match ')
             return redirect('vendor_register')

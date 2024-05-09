@@ -23,6 +23,7 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('customize/', views.customize, name='customize'),
     path('search/', views.search_results, name='search_results'),
+    path('verify-email/', views.verify_email, name='verify_email'),
     
 
 ]

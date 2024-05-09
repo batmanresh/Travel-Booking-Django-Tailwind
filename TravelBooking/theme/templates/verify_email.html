@@ -1,0 +1,37 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verify Email</title>
+    {% tailwind_css %}
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>	
+</head>
+<body class="bg-gradient-to-r from-blue-400 to-indigo-600">
+    <div class="flex justify-center items-center h-screen">
+        
+        <div class="max-w-md w-full p-8 bg-white rounded-lg shadow-lg relative">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Verify Your Email</h2>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="flex justify-center items-center h-screen">
+                <label for="otp" class="text-sm font-semibold mb-1">Enter OTP:</label>
+                <input type="text" id="otp" name="otp" class="border border-gray-300 rounded-md px-4 py-2">
+                <button type="submit" class="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600 transition-colors">Verify</button>
+            </div>
+            
+        </form>
+    </div>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    {% for flashmsg in messages %}
+    <script>
+        alertify.set('notifier','position', 'top-right');
+        alertify.success('{{ flashmsg }}');
+    </script>
+    {% endfor %}
+</body>
+</html>

@@ -26,7 +26,7 @@ urlpatterns = [
     path('compare/', views.compare_products, name='compare'),
 
 
-    
+    path('verify-email/', views.verify_email, name='verify_email'),
     path('customize/', views.customize, name='customize'),
 
     path('contact/', views.contact_us, name='contact_us'),

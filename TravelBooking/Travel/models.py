@@ -11,6 +11,7 @@ import shortuuid
 
 
 
+
 STATUS_CHOICE={
     ("process","Processing"),
     ("confirmed","Confirmed"),
@@ -115,6 +116,15 @@ class Product(models.Model):
             return True
         else:
             return False
+
+
+
+class OTP(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    otp_code = models.CharField(max_length=6)
+
+    def __str__(self):
+        return self.otp_code
 
     
 class ProductImages(models.Model):
