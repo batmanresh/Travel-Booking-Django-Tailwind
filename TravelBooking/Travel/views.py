@@ -507,6 +507,9 @@ def verify_email(request):
                 user = User.objects.get(username=username)
                 otp_instance = OTP.objects.get(user=user)
                 if otp_instance.otp_code == otp_entered:
+                    # Mark OTP as verified
+                    otp_instance.verified = True
+                    otp_instance.save()
                     # Mark email as verified
                     user.email_verified = True
                     user.save()
@@ -530,14 +533,7 @@ def verify_email(request):
     else:
         return render(request, 'verify_email.html')
 
-
-        
-
-
-######################## LOGIN ###############################
-
-
-
+# Login view
 def login(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -547,13 +543,20 @@ def login(request):
             password = request.POST['password']
             user = authenticate(username=username, password=password)
             if user is not None:
-                if user.groups.filter(name__in=['vendor', 'admin']).exists():
-                    messages.error(request, 'Vendors and admins are not allowed to log in.')
-                    return redirect('login')
-                else:
-                    auth_login(request, user)
-                    messages.success(request, 'Successfully logged in.')
-                    return redirect('index')
+                try:
+                    otp_instance = OTP.objects.get(user=user)
+                    if not otp_instance.verified:
+                        # Redirect to OTP verification page if OTP is not verified
+                        request.session['username'] = username
+                        return redirect('verify_email')
+                except OTP.DoesNotExist:
+                    # If OTP instance does not exist, redirect to OTP verification page
+                    request.session['username'] = username
+                    return redirect('verify_email')
+                
+                auth_login(request, user)
+                messages.success(request, 'Successfully logged in.')
+                return redirect('index')
             else:
                 messages.error(request, 'Invalid credentials.')
                 return redirect('login')
@@ -592,9 +595,21 @@ def vendor_login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = auth.authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password)
         if user is not None and user.groups.filter(name='vendor').exists():
-            auth.login(request, user)  
+            try:
+                otp_instance = OTP.objects.get(user=user)
+                if not otp_instance.verified:
+                    # Redirect to OTP verification page if OTP is not verified
+                    request.session['username'] = username
+                    return redirect('verify_email')
+            except OTP.DoesNotExist:
+                # If OTP instance does not exist, redirect to OTP verification page
+                request.session['username'] = username
+                return redirect('verify_email')
+            
+            # If OTP is verified or not required, log in the user
+            auth_login(request, user)  
             messages.success(request, 'Successfully logged in as vendor')
             return redirect('vendor_dashboard')
         else:

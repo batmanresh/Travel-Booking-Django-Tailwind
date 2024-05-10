@@ -30,10 +30,10 @@
             
             <ul class="py-4">
                 <li>
-                    <a href="{% url 'vendor_products' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Products</a>
+                    <a href="{% url 'vendor_products' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Destination</a>
                 </li>
                 <li>
-                    <a href="{% url 'add_product' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Add Product</a>
+                    <a href="{% url 'add_product' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Add Destinations</a>
                 </li>
                 <li>
                     <a href="{% url 'vendor_settings' %}" class="block py-2 px-4 text-sm hover:bg-gray-700">Settings</a>
@@ -54,7 +54,7 @@
             </div>
         </nav>
         <div class="container mx-auto mt-10 ml-5">
-            <h1 class="text-3xl font-bold mb-6">Add Product</h1>
+            <h1 class="text-3xl font-bold mb-6">Add Destination</h1>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% if form.errors %}
@@ -109,7 +109,7 @@
                         {{ image_form.images }}
                     {% endfor %}
                 </div>
-                <button type="submit" class="py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Add Product</button>
+                <button type="submit" class="py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Add Destination</button>
             </form>
         </div>
     </div>

@@ -51,21 +51,21 @@ Destinations
         <p class="text-gray-700 mb-2">{{ product.description }}</p>
         <div class = 'flex space-x-28 text-gray-600'>
           <div>
-            <p>Category:</p>
-            <span>{{product.category.title}}</span>
+            <p>Category: {{product.category.title}}</p>
+            
           </div>
           
           <div>
-            <p>Vendor:</p>
-            <span>{{ product.user }}</span>
+            <p>Vendor: {{ product.user }}</p>
+            
           </div>
           
         </div>
-        <h2 class = 'text-xl font-semibold'>Price: Rs. 1</h2>
+        <h2 class = 'text-xl font-semibold'>Price: Rs.{{ product.price }}</h2>
         <div class = 'text-gray-600'>
           <p style="text-decoration: line-through ;">Original Price: <span style="text-decoration: line-through;">{{ product.old_price }}</span></p>
 
-          <p class="text-red-500">Discount: <span>{{product.get_percentage}}%</span></p>
+          <p class="text-red-500">Discount: <span>{{ product.get_percentage|default:"0"|floatformat:0 }}%</span></p>
         </div>
 
       </div>
