@@ -267,6 +267,8 @@ def clean_decimal(value):
 ######################################### PAYMENT RESPONSE ####################################################
 
 
+
+
 @csrf_exempt
 def payment_response(request):
     encoded_data = request.GET.get('data')
