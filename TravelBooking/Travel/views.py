@@ -33,6 +33,10 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.views.generic.edit import FormView
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
+import random
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from .models import OTP
 
 
 
@@ -274,6 +278,7 @@ def payment_response(request):
     transaction_status = response_data.get('status')
 
     if transaction_status == 'COMPLETE':
+        num_guests = request.session.get('num_guests', 1)
         # Extract necessary details from the response
         transaction_uuid = response_data.get('transaction_uuid')
         transaction_code = response_data.get('transaction_code')
@@ -285,6 +290,12 @@ def payment_response(request):
         start_date = request.session.get('start_date')
         # Attempt to retrieve the product using the session stored package_id
         product = get_object_or_404(Product, pid=package_id)
+
+        if not product.decrease_sku(num_guests):
+            return JsonResponse({'status': 'failed', 'message': 'Not enough available SKUs'})
+
+        if product.sku < 2:
+            send_vendor_notification(product)
 
         # Optionally find the user who made the booking, assuming authenticated session
         user = request.user if request.user.is_authenticated else None
@@ -316,7 +327,11 @@ def payment_response(request):
         return JsonResponse({'status': 'failed', 'message': 'Transaction incomplete'})
 
     return JsonResponse({'status': 'error', 'message': 'Unexpected error occurred'}, status=500)
-
+def send_vendor_notification(product):
+    subject = "Low Product Stock Alert"
+    message = f"The stock for {product.title} (SKU: {product.sku}) is low. Please consider restocking."
+    recipient_list = [product.user.email]
+    send_mail(subject, message, 'np03cs4s220121@heraldcollege.edu.np', recipient_list)
 
 ######################################### SUBMIT BOOKING ####################################################
 from django.http import HttpResponseBadRequest
@@ -440,10 +455,7 @@ def customize(request):
 
 ######################################################################## SIGNUP ###############################################################################
 
-import random
-from django.core.mail import send_mail
-from django.contrib.auth.models import User
-from .models import OTP
+
 
 # Function to generate OTP
 def generate_otp():
