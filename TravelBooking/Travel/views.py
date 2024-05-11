@@ -280,8 +280,6 @@ def payment_response(request):
 
 
 
-
-
     if transaction_status == 'COMPLETE':
         num_guests = request.session.get('num_guests', 1)
         # Extract necessary details from the response
