@@ -277,6 +277,7 @@ def payment_response(request):
     response_data = json.loads(decoded_data)
     transaction_status = response_data.get('status')
 
+
     if transaction_status == 'COMPLETE':
         num_guests = request.session.get('num_guests', 1)
         # Extract necessary details from the response
