@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'Travel',
     'sweetify',
 
-
 ]
 
 TAILWIND_APP_NAME = 'theme'

@@ -551,6 +551,8 @@ def verify_email(request):
         return render(request, 'verify_email.html')
 
 # Login view
+from django.contrib import admin
+
 def login(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -560,25 +562,37 @@ def login(request):
             password = request.POST['password']
             user = authenticate(username=username, password=password)
             if user is not None:
-                try:
-                    otp_instance = OTP.objects.get(user=user)
-                    if not otp_instance.verified:
-                        # Redirect to OTP verification page if OTP is not verified
-                        request.session['username'] = username
-                        return redirect('verify_email')
-                except OTP.DoesNotExist:
-                    # If OTP instance does not exist, redirect to OTP verification page
-                    request.session['username'] = username
-                    return redirect('verify_email')
-                
-                auth_login(request, user)
-                messages.success(request, 'Successfully logged in.')
-                return redirect('index')
+                # try:
+                #     otp_instance = OTP.objects.get(user=user)
+                #     if not otp_instance.verified:
+                #         # Redirect to OTP verification page if OTP is not verified
+                #         request.session['username'] = username
+                #         return redirect('verify_email')
+                # except OTP.DoesNotExist:
+                #     # If OTP instance does not exist, redirect to OTP verification page
+                #     request.session['username'] = username
+                #     return redirect('verify_email')
+
+                if user.groups.filter(name='vendor').exists():
+                    # If user belongs to the 'vendor' group, display message and do not login
+                    messages.error(request, 'Vendor accounts cannot login here.')
+                    return redirect('login')
+                elif user.groups.filter(name='admin').exists():
+                    # If user belongs to the 'admin' group, forward to admin dashboard
+                    auth_login(request, user)
+                    messages.success(request, 'Successfully logged in as admin.')
+                    return redirect('/admin/')  # Redirect to Django admin index
+                else:
+                    # For other user groups, proceed with regular login
+                    auth_login(request, user)
+                    messages.success(request, 'Successfully logged in.')
+                    return redirect('index')
             else:
                 messages.error(request, 'Invalid credentials.')
                 return redirect('login')
         else:
             return render(request, 'login.html')
+        
 
 
 

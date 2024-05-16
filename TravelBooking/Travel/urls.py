@@ -7,6 +7,7 @@ from .views import CustomPasswordResetView, CustomPasswordResetDoneView, CustomP
 
 urlpatterns = [
     path('', views.index, name='index'),
+    
     path('base/', views.base, name='base'),
     path('product_list/', views.product_list_view, name='product_list'),
     path('product_list/<int:category_id>/', views.filtered_product_list_view, name='filtered_product_list'),
