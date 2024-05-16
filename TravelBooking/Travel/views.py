@@ -562,16 +562,16 @@ def login(request):
             password = request.POST['password']
             user = authenticate(username=username, password=password)
             if user is not None:
-                # try:
-                #     otp_instance = OTP.objects.get(user=user)
-                #     if not otp_instance.verified:
-                #         # Redirect to OTP verification page if OTP is not verified
-                #         request.session['username'] = username
-                #         return redirect('verify_email')
-                # except OTP.DoesNotExist:
-                #     # If OTP instance does not exist, redirect to OTP verification page
-                #     request.session['username'] = username
-                #     return redirect('verify_email')
+                try:
+                    otp_instance = OTP.objects.get(user=user)
+                    if not otp_instance.verified:
+                        # Redirect to OTP verification page if OTP is not verified
+                        request.session['username'] = username
+                        return redirect('verify_email')
+                except OTP.DoesNotExist:
+                    # If OTP instance does not exist, redirect to OTP verification page
+                    request.session['username'] = username
+                    return redirect('verify_email')
 
                 if user.groups.filter(name='vendor').exists():
                     # If user belongs to the 'vendor' group, display message and do not login

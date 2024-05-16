@@ -75,13 +75,12 @@ class Product(models.Model):
     image = models.ImageField(upload_to=user_directory_path, default="product.jpg")
     description = models.TextField(null=True, blank=True, default="Contact vendor for more information.")
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
 
     price = models.IntegerField(default=1)
     old_price = models.IntegerField(default=2)
 
-    specifications = models.TextField(null=True, blank=True)
     is_available = models.BooleanField(default=True)
      
     product_status = models.CharField(

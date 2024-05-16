@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Vendor, ProductReview, ProductImages,Booking,ContactMessage
+from .models import Product, Category, Vendor, ProductReview, ProductImages,Booking,ContactMessage, OTP
 
 
 class ProductImagesAdmin(admin.TabularInline):
@@ -25,6 +25,9 @@ class BookingAdmin(admin.ModelAdmin):
 class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'timestamp')
 
+class OTPAdmin(admin.ModelAdmin):
+    list_display = ('user', 'verified', 'otp_code')    
+
 
 
 
@@ -36,4 +39,5 @@ admin.site.register(Vendor,VendorAdmin)
 admin.site.register(ProductReview,ProductReviewAdmin)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(ContactMessage)
+admin.site.register(OTP,OTPAdmin)
 

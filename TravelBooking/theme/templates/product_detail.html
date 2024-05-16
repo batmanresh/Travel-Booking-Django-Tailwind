@@ -112,17 +112,7 @@ Destinations
               min="1"
             />
           </div>
-          {% if not user.is_authenticated %}
-          <div
-            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
-            <strong class="font-bold">Warning!</strong>
-            <span class="block sm:inline">
-              You must be logged in to check availability.</span
-            >
-          </div>
-          {% endif %}
+
   
           <button
             type="submit"
