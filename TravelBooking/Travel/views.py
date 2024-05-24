@@ -76,20 +76,21 @@ def product_list_view(request, category_slug=None):
 
     return render(request, "product_list.html", context)
 
+#filet products
 def filtered_product_list_view(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    products = Product.objects.filter(product_status="published", category=category,status=True)
+    products = Product.objects.filter(product_status="published", category=category, status=True)
     categories = Category.objects.all()
 
     context = {
-        "category": category,
+        "selected_category": category.title,  # Add selected category name to context
         "products": products,
         "categories": categories
     }
 
     return render(request, "product_list.html", context)
 
-
+#destination details
 def product_detail_view(request, pid):
    
     product = get_object_or_404(Product, pid=pid)
@@ -104,7 +105,7 @@ def product_detail_view(request, pid):
 def settings(request):
 
     return render(request,"settings.html")
-
+#search results
 def search_results(request):
     search_query = request.GET.get('q', '')
 
@@ -124,7 +125,7 @@ def search_results(request):
 
 
 
-
+#compare products
 def compare_products(request):
     products = Product.objects.filter(product_status="published",status=True)
     selected_products = None
@@ -332,6 +333,8 @@ def payment_response(request):
         return JsonResponse({'status': 'failed', 'message': 'Transaction incomplete'})
 
     return JsonResponse({'status': 'error', 'message': 'Unexpected error occurred'}, status=500)
+
+#send notification to vendor when SKU is less than 2
 def send_vendor_notification(product):
     subject = "Low Product Stock Alert"
     message = f"The stock for {product.title} (SKU: {product.sku}) is low. Please consider restocking."
@@ -604,6 +607,7 @@ def logout(request):
 
 
 ################################################# VENDOR LOGIN ###################################################
+from django.db.models import Sum
 @allowed_users(allowed_roles=['vendor'])
 @vendor_only
 @login_required(login_url= "vendor_login")
@@ -613,10 +617,16 @@ def vendor_dashboard(request):
     
     # Fetch the number of bookings received by the vendor
     num_bookings = Booking.objects.filter(product__user=request.user).count()
+
+    bookings = Booking.objects.filter(product__user=request.user).order_by('-check_in_date')[:5]
+
+    total_earnings = Booking.objects.filter(product__user=request.user).aggregate(total=Sum('total_price'))['total'] or 0
     
     context = {
         'num_products': num_products,
-        'num_bookings': num_bookings
+        'num_bookings': num_bookings,
+        'bookings': bookings,
+        'total_earnings': total_earnings, 
     }
     
     return render(request, 'vendor_dashboard.html', context)
@@ -805,6 +815,22 @@ def vendor_edit_profile(request):
         form = EditProfileForm(instance=request.user)
     
     return render(request, 'vendor_edit_profile.html', {'form': form})
+
+
+#vendor booking details
+
+@allowed_users(allowed_roles=['vendor'])
+@vendor_only
+@login_required(login_url="vendor_login")
+def vendor_bookings_view(request):
+    # Fetch bookings related to the products of the logged-in vendor
+    bookings = Booking.objects.filter(product__user=request.user).select_related('user', 'product')
+    
+    context = {
+        'bookings': bookings
+    }
+    
+    return render(request, 'vendor_bookings.html', context)
 
 
 

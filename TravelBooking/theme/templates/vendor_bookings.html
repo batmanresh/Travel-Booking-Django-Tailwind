@@ -1,19 +1,16 @@
-<!-- vendor_dashboard.html -->
 {% load static tailwind_tags %}
 {% tailwind_css %}
-{{ form.media }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Add Product</title>
+    <title>Vendor Bookings</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
     <!-- Default theme -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -61,70 +58,62 @@
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 py-2">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-semibold">Vendor Dashboard</h1>
+                    <h1 class="text-2xl font-semibold">Vendor Bookings</h1>
                 </div>
             </div>
         </nav>
-        <div class="container mx-auto mt-10 ml-5">
-            <h1 class="text-3xl font-bold mb-6">Add Destination</h1>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% if form.errors %}
-                    <div class="alert alert-danger" role="alert">
-                        <strong>Error:</strong> Please correct the following errors.
-                        <ul>
-                        {% for field in form %}
-                            {% for error in field.errors %}
-                                <li>{{ field.label }}: {{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-                <div class="mb-4">
-                    <label for="title" class="block text-gray-700 font-bold mb-2">Title</label>
-                    {{ form.title }}
-                </div>
-                <div class="mb-4">
-                    <label for="image" class="block text-gray-700 font-bold mb-2">Image</label>
-                    {{ form.image }}
-                </div>
-                <div class="mb-4">
-                    <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
-                    {{ form.description }}
-                </div>
-                <div class="mb-4">
-                    <label for="category" class="block text-gray-700 font-bold mb-2">Category</label>
-                    {{ form.category }}
-                </div>
-                <div class="mb-4">
-                    <label for="price" class="block text-gray-700 font-bold mb-2">Price</label>
-                    {{ form.price }}
-                </div>
-                <div class="mb-4">
-                    <label for="old_price" class="block text-gray-700 font-bold mb-2">Old Price</label>
-                    {{ form.old_price }}
-                </div>
-                <div class="mb-4">
-                    <label for="sku" class="block text-gray-700 font-bold mb-2">SKU </label>
-                    {{ form.sku }}
-                </div>
-                <div class="mb-4">
-                    <label for="is_available" class="block text-gray-700 font-bold mb-2">Is Available</label>
-                    {{ form.is_available }}
-                </div>
-                <!-- Multiple image upload fields -->
-                <div class="mb-4">
-                    <label for="images" class="block text-gray-700 font-bold mb-2">Images</label>
-                    {{ formset.management_form }}
-                    {% for image_form in formset %}
-                        {{ image_form.images }}
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Your content here -->
+            <div class="mt-4">
+                {% if bookings %}
+                <ul>
+                    {% for booking in bookings %}
+                    <li class="bg-white shadow overflow-hidden rounded-md px-6 py-4 mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
+                            <i class="fas fa-book mr-2 text-blue-500"></i>Booking ID: {{ booking.id }} - {{ booking.product.title }}
+                        </h3>
+                        
+                        <div class="space-y-1 text-sm text-gray-500">
+                            <p>
+                                <span class="font-semibold text-gray-700">Date:</span> {{ booking.check_in_date }}
+                            </p>
+                            <p>
+                                <span class="font-semibold text-gray-700">Customer Name:</span> {{ booking.user.get_full_name }}
+                            </p>
+                            <p>
+                                <span class="font-semibold text-gray-700">Customer Email:</span> {{ booking.user.email }}
+                            </p>
+                            <p>
+                                <span class="font-semibold text-gray-700">Payment Status:</span>
+                                <span class="font-semibold {% if booking.transaction_status == 'Completed' %} text-green-500 {% else %} text-red-500 {% endif %}">
+                                    {{ booking.transaction_status }}
+                                </span>
+                            </p>
+                            <p>
+                                <span class="font-semibold text-gray-700">Total Price:</span> Rs. {{ booking.total_price|default:"0"|floatformat:0 }}
+                            </p>
+                            <p>
+                                <span class="font-semibold text-gray-700">Number of Guests:</span> {{ booking.num_guests }}
+                            </p>
+                            
+                        </div>
+                    </li>
                     {% endfor %}
+                </ul>
+                {% else %}
+                <div class="bg-white shadow overflow-hidden rounded-md p-4">
+                    <p class="text-gray-500">You have no bookings for your listings yet.</p>
                 </div>
-                <button type="submit" class="py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">Add Destination</button>
-            </form>
+                {% endif %}
+            </div>
         </div>
     </div>
-    <!-- Include scripts here -->
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    {% for flashmsg in messages %}
+    <script>
+        alertify.set('notifier','position', 'top-right');
+        alertify.success('{{ flashmsg }}');
+    </script>
+    {% endfor %}
 </body>
 </html>

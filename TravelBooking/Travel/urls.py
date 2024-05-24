@@ -43,6 +43,7 @@ urlpatterns = [
     path('vendor_dashboard/', views.vendor_dashboard, name='vendor_dashboard'),
     path('vendor_settings/', views.vendor_settings, name='vendor_settings'),
     path('vendor_edit_profile/', views.vendor_edit_profile, name='vendor_edit_profile'),
+    path('vendor_booking/', views.vendor_bookings_view, name='vendor_booking'),
 
 
 
