@@ -866,6 +866,19 @@ def vendor_bookings_view(request):
     
     return render(request, 'vendor_bookings.html', context)
 
+@login_required
+def vendor_reviews_view(request):
+    # Fetch products related to the vendor
+    vendor_products = Product.objects.filter(user=request.user)
+    # Fetch reviews for these products
+    reviews = ProductReview.objects.filter(product__in=vendor_products).select_related('product', 'user')
+    
+    context = {
+        'reviews': reviews,
+    }
+    return render(request, 'vendor_reviews.html', context)
+
+
 
 
 

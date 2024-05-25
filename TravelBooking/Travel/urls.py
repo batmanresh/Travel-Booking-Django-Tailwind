@@ -1,8 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import CustomPasswordResetView, CustomPasswordResetDoneView, CustomPasswordResetConfirmView, \
-    CustomPasswordResetCompleteView, ForgotPasswordView
+from .views import CustomPasswordResetView, CustomPasswordResetDoneView, CustomPasswordResetConfirmView,CustomPasswordResetCompleteView, ForgotPasswordView
 
 
 urlpatterns = [
@@ -44,7 +43,7 @@ urlpatterns = [
     path('vendor_settings/', views.vendor_settings, name='vendor_settings'),
     path('vendor_edit_profile/', views.vendor_edit_profile, name='vendor_edit_profile'),
     path('vendor_booking/', views.vendor_bookings_view, name='vendor_booking'),
-
+    path('vendor_reviews/', views.vendor_reviews_view, name='vendor_reviews'),
 
 
 
