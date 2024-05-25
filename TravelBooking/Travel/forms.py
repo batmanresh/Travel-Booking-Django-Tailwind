@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import User,Booking,Product,Category,STATUS, ContactMessage,ProductImages
+from .models import User,Booking,Product,Category,STATUS, ContactMessage,ProductImages,ProductReview
 
 
 class UserProfileForm(forms.ModelForm):
@@ -52,3 +52,25 @@ class ContactForm(forms.Form):
     name = forms.CharField(max_length=100)
     email = forms.EmailField()
     message = forms.CharField(widget=forms.Textarea)
+
+
+
+RATING_CHOICES = (
+    (1, '★'),
+    (2, '★★'),
+    (3, '★★★'),
+    (4, '★★★★'),
+    (5, '★★★★★'),
+)
+
+class ProductReviewForm(forms.ModelForm):
+    rating = forms.ChoiceField(choices=RATING_CHOICES, label='Rating (1-5)')
+
+    class Meta:
+        model = ProductReview
+        fields = ['review', 'rating']
+
+    def __init__(self, *args, **kwargs):
+        super(ProductReviewForm, self).__init__(*args, **kwargs)
+        # Ensure the rating field uses the custom choices
+        self.fields['rating'].choices = RATING_CHOICES

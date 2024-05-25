@@ -21,7 +21,7 @@ import decimal
 from django.views.decorators.csrf import csrf_exempt
 from .utils import send_email_to_client
 from django.core.files.storage import FileSystemStorage
-from .forms import EditProfileForm,AddProductForm,ContactForm
+from .forms import EditProfileForm,AddProductForm,ContactForm,ProductReviewForm
 from .decorators import allowed_users,vendor_only
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -104,19 +104,41 @@ def filtered_product_list_view(request, category_id):
 
 #destination details
 def product_detail_view(request, pid):
-   
     product = get_object_or_404(Product, pid=pid)
-    print(product.image.url)
     product_images = ProductImages.objects.filter(product=product)
+    reviews = ProductReview.objects.filter(product=product)
+    
+    # Check if the current user has booked the product
+    user_booked_product = product.booking_set.filter(user=request.user).exists()
+    
+    if request.method == 'POST':
+        review_form = ProductReviewForm(request.POST)
+        if review_form.is_valid() and user_booked_product:
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.product = product
+            review.save()
+            messages.success(request, 'Your review has been submitted!')
+            return redirect('product_detail', pid=pid)
+        elif not user_booked_product:
+            messages.error(request, 'You must book the product to submit a review.')
+    else:
+        review_form = ProductReviewForm()
+
     context = {
         "product": product,
-        "product_images": product_images
+        "product_images": product_images,
+        "reviews": reviews,
+        "review_form": review_form,
+        "user_booked_product": user_booked_product,
     }
     return render(request, "product_detail.html", context)
+
 
 def settings(request):
 
     return render(request,"settings.html")
+
 #search results
 def search_results(request):
     search_query = request.GET.get('q', '')
