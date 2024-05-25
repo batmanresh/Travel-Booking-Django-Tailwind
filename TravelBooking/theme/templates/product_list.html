@@ -5,8 +5,9 @@
 {% endblock %}
 {% tailwind_css %}  
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-	<!-- Default theme -->
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     
 
 {% block content %}
@@ -49,11 +50,10 @@
         </div>
     </div>
 </div>
-{% if selected_category %}
-<div class="text-center mt-4 font-semibold text-lg">Results for {{ selected_category }}</div>
+
+{% if category %}
+    <div class="text-center mt-4 font-semibold text-lg">Results for {{ category.title }}</div>
 {% endif %}
-
-
 
 <!-- Product Grid -->
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
@@ -90,4 +90,38 @@
         </div>
     {% endfor %}
 </div>
+
+<!-- Pagination Controls -->
+<div class="mt-6 flex justify-center">
+    <div class="inline-flex space-x-2">
+        {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+                <i class="fas fa-chevron-left"></i> Previous
+            </a>
+        {% else %}
+            <span class="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-l cursor-not-allowed">
+                <i class="fas fa-chevron-left"></i> Previous
+            </span>
+        {% endif %}
+        
+        {% for num in products.paginator.page_range %}
+            {% if products.number == num %}
+                <span class="bg-blue-500 text-white font-bold py-2 px-4">{{ num }}</span>
+            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                <a href="?page={{ num }}" class="bg-white text-blue-500 hover:bg-blue-700 hover:text-white font-bold py-2 px-4">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+        {% else %}
+            <span class="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-r cursor-not-allowed">
+                Next <i class="fas fa-chevron-right"></i>
+            </span>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}

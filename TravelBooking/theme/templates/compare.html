@@ -4,110 +4,85 @@
 
 {% block content %}
 <!-- Search Bar Section -->
-<div class="bg-cover bg-center bg-gray-100 text-white py-24" style="background-image: url('/static/images/bg1.jpeg');background-position: top;">
+<div class="bg-cover bg-center bg-gray-100 text-white py-24" style="background-image: url('/static/images/bg1.jpeg') ;background-position: top;">
   <div class="container mx-auto px-6 text-center">
-      <h1 class="text-6xl font-bold">Compare Destinations</h1>
-      <p class="mt-4 text-2xl ">Confused Between Places?</p>
-      <div class="container mx-auto mt-16 flex justify-center">
-          <div class="relative">
-              <form id="searchForm" class="flex" method="GET" action="{% url 'search_results' %}">
-                  <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
-                  <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
-                      <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
-                  </button>
-              </form>
-          </div>
+    <h1 class="text-6xl font-bold">Compare Destinations</h1>
+    <p class="mt-4 text-2xl">Confused Between Places?</p>
+    <div class="container mx-auto mt-16 flex justify-center">
+      <div class="relative">
+        <form id="searchForm" class="flex" method="GET" action="{% url 'search_results' %}">
+          <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
+          <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
+            <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+          </button>
+        </form>
       </div>
+    </div>
   </div>
 </div>
-  {% if selected_products %}
-    <!-- Display selected products and comparison results side by side -->
-    <div class="flex flex-wrap justify-between">
-      <!-- Display compared products side by side -->
-      {% for product in selected_products %}
-        <div class="w-full md:w-1/2 mb-6 "> 
-            
-        
-          <h2 class="text-lg font-semibold mb-4">{{ product.title }}</h2>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <img
-              src="{{ product.image.url }}"
-              alt="{{ product.title }}"
-              class="w-full mb-4 rounded"
-            />
-            <p class="text-gray-700 mb-2">
-              <strong>Category:</strong> {{ product.category.title }}
-            </p>
-            <p class="text-gray-700 mb-2">
-              <strong>Vendor:</strong> {{ product.user }}
-            </p>
-            <p class="text-gray-700 mb-2">
-              <strong>Price:</strong> Rs.{{ product.price }}
-            </p>
-            <a
-              href="{% url 'product_detail' product.pid %}"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block"
-              >Book Now</a
-            >
+
+{% if selected_products %}
+  <!-- Display selected products and comparison results side by side -->
+  <div class="flex flex-wrap justify-between">
+    <!-- Display compared products side by side -->
+    {% for product in selected_products %}
+      <div class="w-full md:w-1/2 mb-6 flex flex-col">
+        <h2 class="text-lg font-semibold mb-4">{{ product.title }}</h2>
+        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
+          <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full mb-4 rounded" />
+          <p class="text-gray-700 mb-2"><strong>Category:</strong> {{ product.category.title }}</p>
+          <p class="text-gray-700 mb-2"><strong>Vendor:</strong> {{ product.user }}</p>
+          <p class="text-gray-700 mb-2"><strong>Price:</strong> Rs.{{ product.price }}</p>
+          <div class="mt-auto">
+            <a href="{% url 'product_detail' product.pid %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Read More</a>
           </div>
         </div>
-      {% endfor %}
+      </div>
+    {% endfor %}
 
-      <!-- Display comparison results -->
-      <div class="w-full md:w-1/2 mb-6">
-        {% if comparison_result %}
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-lg font-semibold mb-4">Comparison Result</h2>
-            <p class="text-gray-700 mb-2">
-              <strong>Price:</strong> {{ comparison_result.price }}
-            </p>
-           
-          </div>
-        {% endif %}
+    <!-- Display comparison results -->
+    <div class="w-full md:w-1/2 mb-6 flex flex-col">
+      {% if comparison_result %}
+        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col h-full">
+          <h2 class="text-lg font-semibold mb-4"><i class="fas fa-balance-scale-right mr-2 text-blue-500"></i> Comparison Result</h2>
+          <p class="text-gray-700 mb-2"><strong>Price:</strong> {{ comparison_result.price }}</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Compare Again button -->
+  <a href="{% url 'compare' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 inline-block">Compare Again</a>
+{% else %}
+  <!-- Display product selection form -->
+  <form method="POST">
+    {% csrf_token %}
+    <div class="flex flex-col md:flex-row p-5 space-y-5 md:space-y-0 md:space-x-5">
+      <!-- Left side for selecting the first product -->
+      <div class="w-full md:w-1/2">
+        <label for="product1" class="block mb-2 font-semibold">Select Product 1:</label>
+        <select id="product1" name="selected_product1" class="w-full border rounded px-3 py-2">
+          <option value="">Select a product</option>
+          {% for product in products %}
+            <option value="{{ product.id }}">{{ product.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- Right side for selecting the second product -->
+      <div class="w-full md:w-1/2">
+        <label for="product2" class="block mb-2 font-semibold">Select Product 2:</label>
+        <select id="product2" name="selected_product2" class="w-full border rounded px-3 py-2">
+          <option value="">Select a product</option>
+          {% for product in products %}
+            <option value="{{ product.id }}">{{ product.title }}</option>
+          {% endfor %}
+        </select>
       </div>
     </div>
 
-    <!-- Compare Again button -->
-    <a
-      href="{% url 'compare' %}"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 inline-block"
-      >Compare Again</a
-    >
-  {% else %}
-    <!-- Display product selection form -->
-    <form method="POST">
-      {% csrf_token %}
-      <div class="flex flex-col md:flex-row p-5 space-y-5 md:space-y-0 md:space-x-5">
-        <!-- Left side for selecting the first product -->
-        <div class="w-full md:w-1/2">
-          <label for="product1" class="block mb-2 font-semibold">Select Product 1:</label>
-          <select id="product1" name="selected_product1" class="w-full border rounded px-3 py-2">
-            <option value="">Select a product</option>
-            {% for product in products %}
-              <option value="{{ product.id }}">{{ product.title }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <!-- Right side for selecting the second product -->
-        <div class="w-full md:w-1/2">
-          <label for="product2" class="block mb-2 font-semibold">Select Product 2:</label>
-          <select id="product2" name="selected_product2" class="w-full border rounded px-3 py-2">
-            <option value="">Select a product</option>
-            {% for product in products %}
-              <option value="{{ product.id }}">{{ product.title }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <button
-          type="submit"
-          class="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 inline-block"
-        >
-          Compare
-        </button>
-      </div>
-    </form>
-  {% endif %}
+    <div>
+      <button type="submit" class="ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 inline-block">Compare</button>
+    </div>
+  </form>
+{% endif %}
 {% endblock %}

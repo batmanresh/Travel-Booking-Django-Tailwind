@@ -37,8 +37,7 @@ import random
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import OTP
-
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 # Create your views here.
@@ -58,23 +57,36 @@ def index(request):
     return render(request, "index.html", context)
 
 
+
+
+#product_list
 def product_list_view(request, category_slug=None):
     category = None
-    products = Product.objects.filter(product_status="published",status=True)
+    products = Product.objects.filter(product_status="published", status=True)
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
+
+    paginator = Paginator(products, 8)  # Show 4 products per page.
+    page = request.GET.get('page')
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
 
     categories = Category.objects.all()
 
     context = {
         "category": category,
         "products": products,
-        "categories": categories
+        "categories": categories,
     }
 
     return render(request, "product_list.html", context)
+
 
 #filet products
 def filtered_product_list_view(request, category_id):
