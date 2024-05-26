@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
-
+    <link rel="icon" href="data:,">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
@@ -172,7 +172,7 @@
 <script>
     var hash = CryptoJS.HmacSHA256("Message", "secret");
     var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
-    console.log(hashInBase64);
+    
 </script>
 <script>// Get current hour
 	var currentHour = new Date().getHours();

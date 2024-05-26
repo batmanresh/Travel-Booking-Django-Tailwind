@@ -231,7 +231,14 @@ Destinations
             );
           }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => 
+        Swal.fire(
+              "Log in Required",
+              "Please log in first!",
+              "info"
+            )
+      
+      );
       return false; // Prevent the default form submission
     }
   </script>

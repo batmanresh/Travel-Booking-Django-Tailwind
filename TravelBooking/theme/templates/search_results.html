@@ -4,27 +4,22 @@
     Search Results
 {% endblock %}
 {% tailwind_css %}  
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
 
-
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-
-    
 {% block content %}
 
-
-<div class="bg-cover bg-center bg-gray-100 text-white py-24" style=" background-image: url('/static/images/bg1.jpeg');background-position: top;">
+<div class="bg-cover bg-center bg-gray-100 text-white py-24" style="background-image: url('/static/images/bg1.jpeg');background-position: top;">
     <div class="container mx-auto px-6 text-center">
         <h1 class="text-6xl font-bold">Welcome to Adven</h1>
         <p class="mt-4 text-2xl">Experience Nepal with us!</p>
         <div class="container mx-auto mt-16 flex justify-center">
             <div class="relative">
                 <form id="searchForm" class="flex" method="GET" action="{% url 'search_results' %}">
-                    <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white   bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
+                    <input id="searchInput" type="search" name="q" placeholder="What would you like to experience?" class="bg-white bg-opacity-75 h-12 px-6 pr-10 rounded-full text-sm w-96 focus:outline-none border border-gray-300 text-gray-800 placeholder-gray-800 shadow-md">
                     <button id="searchButton" type="submit" class="absolute inset-y-0 right-0 flex items-center justify-center bg-blue-500 text-white rounded-full px-4 py-2 ml-2 hover:bg-blue-600 focus:outline-none">
                         <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
                     </button>
-                    
                 </form>
             </div>
         </div>
@@ -62,7 +57,7 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Book Now Button -->
+                        <!-- Read More Button -->
                         <a href="{% url 'product_detail' product.pid %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Read More</a>
                     </div>
                 </div>
@@ -71,8 +66,38 @@
             <p class="text-xl">No results found</p>
         {% endif %}
     </div>
+    
+    <!-- Pagination Controls -->
+    <div class="mt-6 flex justify-center">
+        <div class="inline-flex space-x-2">
+            {% if search_results.has_previous %}
+                <a href="?q={{ search_query }}&page={{ search_results.previous_page_number }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            {% else %}
+                <span class="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-l cursor-not-allowed">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </span>
+            {% endif %}
+            
+            {% for num in search_results.paginator.page_range %}
+                {% if search_results.number == num %}
+                    <span class="bg-blue-500 text-white font-bold py-2 px-4">{{ num }}</span>
+                {% elif num > search_results.number|add:'-3' and num < search_results.number|add:'3' %}
+                    <a href="?q={{ search_query }}&page={{ num }}" class="bg-white text-blue-500 hover:bg-blue-700 hover:text-white font-bold py-2 px-4">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if search_results.has_next %}
+                <a href="?q={{ search_query }}&page={{ search_results.next_page_number }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            {% else %}
+                <span class="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-r cursor-not-allowed">
+                    Next <i class="fas fa-chevron-right"></i>
+                </span>
+            {% endif %}
+        </div>
+    </div>
 </div>
-
-
-
 {% endblock %}

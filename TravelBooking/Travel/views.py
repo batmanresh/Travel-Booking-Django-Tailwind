@@ -68,7 +68,7 @@ def product_list_view(request, category_slug=None):
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
 
-    paginator = Paginator(products, 8)  # Show 4 products per page.
+    paginator = Paginator(products, 8)  # Show 8 products per page.
     page = request.GET.get('page')
     try:
         products = paginator.page(page)
@@ -107,21 +107,23 @@ def product_detail_view(request, pid):
     product = get_object_or_404(Product, pid=pid)
     product_images = ProductImages.objects.filter(product=product)
     reviews = ProductReview.objects.filter(product=product)
-    
-    # Check if the current user has booked the product
-    user_booked_product = product.booking_set.filter(user=request.user).exists()
-    
+
+    user_booked_product = False
+    if request.user.is_authenticated:
+        user_booked_product = product.booking_set.filter(user=request.user).exists()
+
     if request.method == 'POST':
         review_form = ProductReviewForm(request.POST)
-        if review_form.is_valid() and user_booked_product:
-            review = review_form.save(commit=False)
-            review.user = request.user
-            review.product = product
-            review.save()
-            messages.success(request, 'Your review has been submitted!')
-            return redirect('product_detail', pid=pid)
-        elif not user_booked_product:
-            messages.error(request, 'You must book the product to submit a review.')
+        if review_form.is_valid():
+            if user_booked_product:
+                review = review_form.save(commit=False)
+                review.user = request.user
+                review.product = product
+                review.save()
+                messages.success(request, 'Your review has been submitted!')
+                return redirect('product_detail', pid=pid)
+            else:
+                messages.error(request, 'You must book the product to submit a review.')
     else:
         review_form = ProductReviewForm()
 
