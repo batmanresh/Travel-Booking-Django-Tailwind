@@ -151,6 +151,18 @@ def search_results(request):
         status=True
     )
 
+    
+    paginator = Paginator(search_results, 8)  
+    page_number = request.GET.get('page')
+
+    try:
+        search_results = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        search_results = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        search_results = paginator.page(paginator.num_pages)
 
     context = {
         'search_query': search_query,
