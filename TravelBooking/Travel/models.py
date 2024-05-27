@@ -84,7 +84,7 @@ class Product(models.Model):
     is_available = models.BooleanField(default=True)
      
     product_status = models.CharField(
-        choices=STATUS, max_length=10, default="in_review")
+        choices=STATUS, max_length=10, default="published")
     status = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
     sku = models.IntegerField(default=0)

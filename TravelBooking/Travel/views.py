@@ -95,7 +95,7 @@ def filtered_product_list_view(request, category_id):
     categories = Category.objects.all()
 
     context = {
-        "selected_category": category.title,  # Add selected category name to context
+        "selected_category": category.title,  
         "products": products,
         "categories": categories
     }
@@ -348,7 +348,7 @@ def payment_response(request):
         if not product.decrease_sku(num_guests):
             return JsonResponse({'status': 'failed', 'message': 'Not enough available SKUs'})
 
-        if product.sku < 2:
+        if product.sku <= 2:
             send_vendor_notification(product)
 
         # Optionally find the user who made the booking, assuming authenticated session
@@ -371,7 +371,17 @@ def payment_response(request):
 
         if user and user.email:
             subject = 'Booking Confirmation'
-            message = f'Hi {user.username}, your booking for {product.title} on {start_date} has been confirmed.'
+            # Format the date nicely for display in the email
+
+            # Improved message content
+            message = (
+                f"Hello {user.username},\n\n"
+                f"Thank you for your booking with us. We are pleased to inform you that your booking for {product.title} on {start_date} has been confirmed. We look forward to welcoming you and providing a memorable experience.\n\n"
+                f"If you have any questions or require further assistance in the meantime, please feel free to contact our support team.\n\n"
+                f"Warm regards,\n"
+                f"Adven\n"
+                f"np03cs4s220121@heraldcollege.edu.np"  
+            )
             recipient_list = [user.email]
             send_email_to_client(subject, message, recipient_list)
 
@@ -384,10 +394,22 @@ def payment_response(request):
 
 #send notification to vendor when SKU is less than 2
 def send_vendor_notification(product):
-    subject = "Low Product Stock Alert"
-    message = f"The stock for {product.title} (SKU: {product.sku}) is low. Please consider restocking."
+    subject = "Low Stock Alert: Immediate Action Required"
+    # Creating a more detailed message
+    message = (
+        f"Dear Vendor,\n\n"
+        f"We would like to inform you that the capacity level for '{product.title}' is critically low({product.sku}). "
+        "To avoid unavailability and potential sales losses, we kindly request that you review your availability and consider updating it at your earliest convenience.\n\n"
+        "Please log into your vendor portal to update your availability or contact our support team for assistance.\n\n"
+        "Thank you for your prompt attention to this matter.\n\n"
+        "Best Regards,\n"
+        "Adven\n"
+        "np03cs4s220121@heraldcollege.edu.np"
+    )
     recipient_list = [product.user.email]
     send_mail(subject, message, 'np03cs4s220121@heraldcollege.edu.np', recipient_list)
+
+
 
 ######################################### SUBMIT BOOKING ####################################################
 from django.http import HttpResponseBadRequest
