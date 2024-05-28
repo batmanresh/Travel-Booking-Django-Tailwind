@@ -38,7 +38,11 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import OTP
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
+from django.http import HttpResponseBadRequest
+from django.contrib import admin
+from django.db.models import Sum
+from .forms import AddProductForm, AddProductFormSet,ProductImageForm
+from django.forms import inlineformset_factory
 
 # Create your views here.
 
@@ -207,16 +211,12 @@ def contact_us(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Process the form data (e.g., send an email)
-            # You can access the form fields using form.cleaned_data
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             message = form.cleaned_data['message']
 
-            # Handle the form data as needed (e.g., send an email)
-
-            # Redirect to a success page or display a success message
-            return redirect('contact_success')  # Replace 'success_page' with the URL name of your success page
+            
+            return redirect('contact_success') 
     else:
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})
@@ -351,7 +351,7 @@ def payment_response(request):
         if product.sku <= 2:
             send_vendor_notification(product)
 
-        # Optionally find the user who made the booking, assuming authenticated session
+        # Optionally find the user who made the booking
         user = request.user if request.user.is_authenticated else None
         num_guests = request.session.get('num_guests')
         # Create or update the booking entry
@@ -371,9 +371,9 @@ def payment_response(request):
 
         if user and user.email:
             subject = 'Booking Confirmation'
-            # Format the date nicely for display in the email
+           
 
-            # Improved message content
+            
             message = (
                 f"Hello {user.username},\n\n"
                 f"Thank you for your booking with us. We are pleased to inform you that your booking for {product.title} on {start_date} has been confirmed. We look forward to welcoming you and providing a memorable experience.\n\n"
@@ -395,7 +395,7 @@ def payment_response(request):
 #send notification to vendor when SKU is less than 2
 def send_vendor_notification(product):
     subject = "Low Stock Alert: Immediate Action Required"
-    # Creating a more detailed message
+    
     message = (
         f"Dear Vendor,\n\n"
         f"We would like to inform you that the capacity level for '{product.title}' is critically low({product.sku}). "
@@ -412,7 +412,7 @@ def send_vendor_notification(product):
 
 
 ######################################### SUBMIT BOOKING ####################################################
-from django.http import HttpResponseBadRequest
+
 @login_required(login_url="login")
 def submit_booking(request):
     if request.method == 'POST':
@@ -422,7 +422,6 @@ def submit_booking(request):
 
         product = Product.objects.get(pk=product_id)
 
-        # Attempt to decrease the SKU
         if product.decrease_sku(num_guests):
             total_price = calculate_price(product, num_guests)
 
@@ -437,7 +436,7 @@ def submit_booking(request):
 
             return redirect('booking_confirmation', booking_id=booking.id)
         else:
-            # Handle the case where there are not enough available SKUs
+            
             return HttpResponseBadRequest("Not enough available SKUs")
 
     else:
@@ -463,7 +462,7 @@ def change_password(request):
             else:
                 return redirect('settings')
         else:
-            # Handling specific error cases
+            
             if 'old_password' in form.errors:
                 messages.error(request, 'The old password is incorrect.')
             elif 'new_password2' in form.errors:
@@ -578,8 +577,8 @@ def register(request):
                     # Send OTP via email
                     send_otp_email(user, otp)
                     messages.success(request, 'Account created successfully.')
-                    request.session['username'] = username  # Store username in session for verification
-                    return redirect('verify_email')  # Redirect to the OTP verification page
+                    request.session['username'] = username  
+                    return redirect('verify_email')  
             else:
                 messages.error(request, 'Password does not match ')
                 return redirect('register')
@@ -624,7 +623,7 @@ def verify_email(request):
         return render(request, 'verify_email.html')
 
 # Login view
-from django.contrib import admin
+
 
 def login(request):
     if request.user.is_authenticated:
@@ -638,7 +637,7 @@ def login(request):
                 try:
                     otp_instance = OTP.objects.get(user=user)
                     if not otp_instance.verified:
-                        # Redirect to OTP verification page if OTP is not verified
+                        
                         request.session['username'] = username
                         return redirect('verify_email')
                 except OTP.DoesNotExist:
@@ -654,9 +653,9 @@ def login(request):
                     # If user belongs to the 'admin' group, forward to admin dashboard
                     auth_login(request, user)
                     messages.success(request, 'Successfully logged in as admin.')
-                    return redirect('/admin/')  # Redirect to Django admin index
+                    return redirect('/admin/')  
                 else:
-                    # For other user groups, proceed with regular login
+                    
                     auth_login(request, user)
                     messages.success(request, 'Successfully logged in.')
                     return redirect('index')
@@ -677,18 +676,18 @@ def logout(request):
 
 
 ################################################# VENDOR LOGIN ###################################################
-from django.db.models import Sum
+
 @allowed_users(allowed_roles=['vendor'])
 @vendor_only
 @login_required(login_url= "vendor_login")
 def vendor_dashboard(request):
-    # Fetch the number of products added by the vendor
+    
     num_products = Product.objects.filter(user=request.user).count()
     
-    # Fetch the number of bookings received by the vendor
+    
     num_bookings = Booking.objects.filter(product__user=request.user).count()
 
-    bookings = Booking.objects.filter(product__user=request.user).order_by('-check_in_date')[:5]
+    bookings = Booking.objects.filter(product__user=request.user).order_by('-created_at')[:3]
 
     total_earnings = Booking.objects.filter(product__user=request.user).aggregate(total=Sum('total_price'))['total'] or 0
     
@@ -761,7 +760,7 @@ def vendor_register(request):
 
                 user = User.objects.create_user(username=username, password=password1, email=email, first_name=first_name)
                 vendor_group = Group.objects.get(name='vendor')
-                user.groups.add(vendor_group)  # Add user to the vendor group
+                user.groups.add(vendor_group) 
 
                 # Generate OTP
                 otp = generate_otp()
@@ -781,8 +780,7 @@ def vendor_register(request):
         return render(request, 'vendor_register.html')
 
 ######################################################################## ADD PRODUCT ###############################################################################
-from .forms import AddProductForm, AddProductFormSet,ProductImageForm
-from django.forms import inlineformset_factory
+
 @vendor_only
 
 
@@ -902,7 +900,9 @@ def vendor_bookings_view(request):
     
     return render(request, 'vendor_bookings.html', context)
 
-@login_required
+@allowed_users(allowed_roles=['vendor'])
+@vendor_only
+@login_required(login_url="vendor_login")
 def vendor_reviews_view(request):
     # Fetch products related to the vendor
     vendor_products = Product.objects.filter(user=request.user)

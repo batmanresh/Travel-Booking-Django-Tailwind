@@ -5,8 +5,8 @@ from .models import User,Booking,Product,Category,STATUS, ContactMessage,Product
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = User  # Assuming you have a Profile model associated with the User model
-        fields = ['first_name', 'last_name']  # Specify the fields you want to edit
+        model = User  
+        fields = ['first_name', 'last_name']  
 
 
 

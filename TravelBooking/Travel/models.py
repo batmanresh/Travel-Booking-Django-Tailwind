@@ -8,6 +8,7 @@ from datetime import datetime
 from django.utils import timezone
 from shortuuid.django_fields import ShortUUIDField
 import shortuuid
+from django.db import models
 
 
 
@@ -165,7 +166,7 @@ class ProductReview(models.Model):
     
 
 
-from django.db import models
+
 
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

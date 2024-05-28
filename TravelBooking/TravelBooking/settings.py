@@ -156,7 +156,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger'
 }
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # This is typically missing and crucial.
+EMAIL_HOST = 'smtp.gmail.com'  
 EMAIL_HOST_USER = 'np03cs4s220121@heraldcollege.edu.np'
 EMAIL_HOST_PASSWORD = 'qyewmcnmxxovgfwe'
 EMAIL_PORT = 587
