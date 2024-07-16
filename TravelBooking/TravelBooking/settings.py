@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'TravelBooking',
         'USER': 'postgres',
         'PORT': '5432',
-        'PASSWORD': 'Se1@viee',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
     }
 }
